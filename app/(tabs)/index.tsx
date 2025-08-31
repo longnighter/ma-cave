@@ -1,14 +1,14 @@
-import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { FAB, List, Text } from 'react-native-paper';
-import { Wine } from '../../models/Wine'; // Importons notre interface mise à jour
-import { useWines } from '../../context/WineContext'; // On utilise notre hook !
-
+import { View, StyleSheet } from 'react-native';
+import { Text, List, FAB } from 'react-native-paper';
+import { FlatList } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useWines } from '../../context/WineContext';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { wines } = useWines(); // On récupère la liste de vins depuis le contexte
+  const { wines } = useWines();
+
   return (
     <View style={styles.container}>
       {wines.length === 0 ? (
@@ -29,7 +29,6 @@ export default function HomeScreen() {
           style={styles.list}
         />
       )}
-
       <FAB
         icon="plus"
         style={styles.fab}

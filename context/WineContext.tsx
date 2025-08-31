@@ -11,7 +11,7 @@ interface WineContextType {
 // 2. Créer le contexte avec une valeur par défaut
 const WineContext = createContext<WineContextType | undefined>(undefined);
 
-// 3. Créer le "Fournisseur" de contexte
+// 3. Créer le Fournisseur de contexte
 export const WineProvider = ({ children }: { children: ReactNode }) => {
   const [wines, setWines] = useState<Wine[]>(mockWines);
 

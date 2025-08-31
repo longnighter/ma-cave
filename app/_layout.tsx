@@ -5,7 +5,7 @@ import { WineProvider } from '../context/WineContext';
 
 export default function RootLayout() {
   return (
-    <WineProvider> {/* 1. Envelopper avec WineProvider */}
+    <WineProvider>
       <PaperProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
