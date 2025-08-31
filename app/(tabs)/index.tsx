@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB, List, Text } from 'react-native-paper';
@@ -31,6 +32,7 @@ const mockWines: Wine[] = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
   return (
     <View style={styles.container}>
       {mockWines.length === 0 ? (
@@ -55,7 +57,7 @@ export default function HomeScreen() {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => console.log('Bouton Ajouter pressé')}
+        onPress={() => router.push('/(tabs)/add-wine')}
       />
     </View>
   );
