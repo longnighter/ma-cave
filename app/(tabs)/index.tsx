@@ -3,45 +3,21 @@ import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB, List, Text } from 'react-native-paper';
 import { Wine } from '../../models/Wine'; // Importons notre interface mise à jour
+import { useWines } from '../../context/WineContext'; // On utilise notre hook !
 
-// Nos données factices. Elles respectent le nouveau contrat de l'interface Wine.
-const mockWines: Wine[] = [
-  {
-    id: '1',
-    name: 'Château Margaux',
-    year: 1982,
-    region: 'Bordeaux',
-    bestToDrink: [2010, 2040],
-    tastingNotes: ['Cèdre', 'Cassis', 'Tabac blond']
-  },
-  {
-    id: '2',
-    name: 'Domaine de la Romanée-Conti',
-    year: 2005,
-    region: 'Bourgogne',
-    bestToDrink: [2025, 2060],
-    tastingNotes: ['Fruits rouges', 'Sous-bois', 'Rose fanée']
-  },
-  {
-    id: '3',
-    name: 'Clos Rougeard',
-    year: 2010,
-    region: 'Loire',
-    tastingNotes: ['Framboise', 'Poivron', 'Graphite']
-  },
-];
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { wines } = useWines(); // On récupère la liste de vins depuis le contexte
   return (
     <View style={styles.container}>
-      {mockWines.length === 0 ? (
+      {wines.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text variant="headlineSmall">Votre cave est vide.</Text>
         </View>
       ) : (
         <FlatList
-          data={mockWines}
+          data={wines}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <List.Item

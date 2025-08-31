@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import { useWines } from '../../context/WineContext';
 
 export default function AddWineScreen() {
   const router = useRouter();
+  const { addWine } = useWines();
 
   // --- SECTION 1: L'ÉTAT (STATE) ---
   // On crée des "boîtes" pour mémoriser la saisie de l'utilisateur pour chaque champ.
@@ -30,6 +32,7 @@ export default function AddWineScreen() {
 
     // Pour l'instant, on affiche le résultat dans la console du terminal
     console.log('Nouveau vin sauvegardé:', newWine);
+    addWine(newWine);
 
     // Finalement, on retourne à l'écran précédent (la liste)
     router.back();
