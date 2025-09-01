@@ -1,13 +1,20 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, List, FAB } from 'react-native-paper';
-import { FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
+import React from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FAB, List, Text } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { wines } = useWines();
+  const { wines, loading } = useWines();
+
+  if (loading) {
+    return (
+      <View style={styles.emptyContainer}>
+        <ActivityIndicator animating={true} size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

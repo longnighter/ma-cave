@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { Wine } from '../models/Wine';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase'; // On importe notre client Supabase
+import { Wine } from '../models/Wine';
 
 interface WineContextType {
   wines: Wine[];
