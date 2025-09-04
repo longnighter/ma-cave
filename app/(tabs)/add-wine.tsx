@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { TextInput, Button, Text } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text, TextInput } from 'react-native-paper';
+import uuid from "react-native-uuid";
 import { useWines } from '../../context/WineContext';
 
 export default function AddWineScreen() {
@@ -24,7 +25,7 @@ export default function AddWineScreen() {
 
     // On crée notre nouvel objet vin avec les données de l'état
     const newWine = {
-      id: Date.now().toString(), // On génère un ID unique basé sur la date actuelle
+      id: uuid.v4() as string, // On génère un ID unique basé sur la date actuelle
       name: name,
       year: parseInt(year, 10), // On convertit l'année (texte) en nombre
       region: region,

@@ -31,6 +31,8 @@ export default function HomeScreen() {
               title={`${item.name} (${item.year})`}
               description={item.region}
               left={props => <List.Icon {...props} icon="bottle-wine" />}
+              // 👇 AJOUTEZ CETTE LIGNE 👇
+              onPress={() => router.push(`/${item.id}`)}
             />
           )}
           style={styles.list}

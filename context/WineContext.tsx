@@ -39,10 +39,11 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
     fetchWines();
   }, []);
 
-  const addWine = async (wineToAdd: Omit<Wine, 'id'>) => {
+  const addWine = async (wineToAdd: Wine) => {
     const { data, error } = await supabase
       .from('wines')
       .insert({ 
+        id: wineToAdd.id, 
         name: wineToAdd.name,
         year: wineToAdd.year,
         region: wineToAdd.region,
