@@ -28,7 +28,7 @@ export default function AddWineScreen() {
       id: uuid.v4() as string, // On génère un ID unique basé sur la date actuelle
       name: name,
       year: parseInt(year, 10), // On convertit l'année (texte) en nombre
-      region: region,
+      region: region
     };
 
     // Pour l'instant, on affiche le résultat dans la console du terminal
