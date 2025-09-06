@@ -1,6 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { corsHeaders } from '../_shared/cors.ts'
-
+import { serve } from "serve"
+import { corsHeaders } from "shared/cors.ts"
 
 serve(async (req) => {
 
@@ -8,7 +7,6 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
-
   const { name } = await req.json() // This line reads data from the request
   const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
