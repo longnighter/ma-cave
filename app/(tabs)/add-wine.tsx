@@ -2,9 +2,11 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Button, Modal, Portal, Text, TextInput } from 'react-native-paper';
 import uuid from "react-native-uuid";
 import { useWines } from '../../context/WineContext';
+import { Wine } from "../../models/Wine.ts";
 
 export default function AddWineScreen() {
   const router = useRouter();
@@ -12,15 +14,18 @@ export default function AddWineScreen() {
 
   // --- SECTION 1: L'ÉTAT (STATE) ---
   // On crée des "boîtes" pour mémoriser la saisie de l'utilisateur pour chaque champ.
+  const defaultTuple: [number, number] = [0,0];
   const [name, setName] = useState('');
-  const [year, setYear] = useState('');
+  const [year, setYear] = useState(Number);
   const [region, setRegion] = useState('');
-  const [appellation, setAppellation] = useState('');
+  const [appellation, setAppellation] = useState(String);
   const [grape, setGrape] = useState('');
-  const [tastingNotes, setTastingNotes] = useState([]);
-  const [bestToDrink, setBestToDrink] = useState();
+  const [tastingNotes, setTastingNotes] = useState([""]);
+  const [bestToDrink, setBestToDrink] = useState(defaultTuple);
   const [domain, setDomain] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [suggestedWine, setSuggestedWine] = useState<Wine | null>(null);
 
   // --- SECTION 2: LA LOGIQUE DE SAUVEGARDE ---
   const handleSave = () => {
@@ -34,7 +39,7 @@ export default function AddWineScreen() {
     const newWine = {
       id: uuid.v4() as string, // On génère un ID unique basé sur la date actuelle
       name: name,
-      year: parseInt(year,10), // On convertit l'année (texte) en nombre
+      year: year, // On convertit l'année (texte) en nombre
       region: region, 
       appellation: appellation,
       grape: grape,
@@ -63,14 +68,8 @@ export default function AddWineScreen() {
       console.log(data)
       if (error) throw error;
 
-      setName(data.name)
-      setYear(data.year)
-      setRegion(data.region)
-      setAppellation(data.appellation)
-      setGrape(data.grape)
-      setBestToDrink(data.bestToDrink)
-      setTastingNotes(data.tastingNotes)
-      setDomain(data.domain)
+      setIsModalVisible(true)
+      setSuggestedWine(data)
     }
     catch (error: any){
       alert(`Something went wrong. Error :${error.message}`)
@@ -82,69 +81,125 @@ export default function AddWineScreen() {
     }
   }
 
+  const handleUseSuggestion = () => {
+    if (suggestedWine) {
+    
+      setName(suggestedWine.name)
+      setYear(suggestedWine.year)
+      setRegion(suggestedWine.region || "")
+      setAppellation(suggestedWine.appellation || "")
+      setGrape(suggestedWine.grape || "")
+      setBestToDrink(suggestedWine.bestToDrink || defaultTuple);
+      setTastingNotes(suggestedWine.tastingNotes || [""])
+      setDomain(suggestedWine.domain || "")
+    }
+  };
+
   // --- SECTION 3: LE RENDU VISUEL (JSX) ---
   return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>Ajouter un nouveau vin</Text>
-      
-      <TextInput
-        label="Nom du vin"
-        value={name}
-        onChangeText={setName} // Chaque frappe met à jour l'état "name"
-        style={styles.input}
-      />
-    
-      <TextInput
-        label="Millésime (année)"
-        value={year}
-        onChangeText={setYear}
-        keyboardType="numeric" // Affiche un clavier numérique
-        style={styles.input}
-      />
+    <>
+      <ScrollView style={styles.container}>
+        <Text variant="headlineMedium" style={styles.title}>Ajouter un nouveau vin</Text>
+        
+        <TextInput
+          label="Nom du vin"
+          value={name}
+          onChangeText={setName} // Chaque frappe met à jour l'état "name"
+          style={styles.input}
+        />
+        {/*
+        <TextInput
+          label="Millésime (année)"
+          value={year}
+          onChangeText={setYear}
+          keyboardType="numeric" // Affiche un clavier numérique
+          style={styles.input}
+        />
 
-      <TextInput
-        label="Région"
-        value={region}
-        onChangeText={setRegion}
-        style={styles.input}
-      />
-      
-      <Button 
-        mode="contained" 
-        onPress={handleSave} 
-        style={styles.button}
-      >
-        Ajouter à la cave
-      </Button>
+        <TextInput
+          label="Région"
+          value={region}
+          onChangeText={setRegion}
+          style={styles.input}
+        />
+        */}
+        <Button 
+          mode="contained" 
+          onPress={handleSave} 
+          style={styles.button}
+        >
+          Ajouter à la cave
+        </Button>
 
-      <Button 
-        mode="text" 
-        onPress={handleGenerateInfo}
-        loading={isGenerating}
-        disabled={isGenerating}
-        style={styles.button}
-      >
-        Générer les infos avec Gemini
-      </Button>
+        <Button 
+          mode="text" 
+          onPress={handleGenerateInfo}
+          loading={isGenerating}
+          disabled={isGenerating}
+          style={styles.button}
+        >
+          Générer les infos avec Gemini
+        </Button>
 
-    </View>
+      </ScrollView>
+      <Portal>
+        <Modal
+          visible={isModalVisible}
+          onDismiss={() => setIsModalVisible(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          {suggestedWine && (
+            <View>
+              <Text variant="headlineSmall">Suggestion de l'IA</Text>
+              <Text>Nom: {suggestedWine.name}</Text>
+              <Text>Appellation: {suggestedWine.appellation}</Text>
+              <Text>Région: {suggestedWine.region}</Text>
+              <Text>Millésime: {suggestedWine.year}  </Text>
+              <Text>Cépage(s): {suggestedWine.grape} </Text>
+              <Text>Domaine: {suggestedWine.domain} </Text>
+              <Text>Apogée: {suggestedWine.bestToDrink} </Text>
+              <Text>Notes arômatiques: {suggestedWine.tastingNotes} </Text>
+
+              <View style={styles.modalButtonContainer} >
+                <Button onPress={handleUseSuggestion}>
+                  Utiliser ces infos
+                </Button>
+                <Button onPress={() => setIsModalVisible(false)}>
+                  Annuler
+                </Button>
+              </View>
+            </View>
+          )}
+        </Modal>
+      </Portal>
+    </>
   );
 }
 
 // --- SECTION 4: LES STYLES ---
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { flex: 1, padding: 20 },
+  title: { marginBottom: 10, textAlign: 'center' },
+  iaButton: { alignSelf: 'center', marginBottom: 20 },
+  input: { marginBottom: 15 },
+  button: { marginTop: 10, paddingTop: 8, paddingBottom: 8 },
+  // Nouveaux styles pour le modal
+  modalContainer: {
+    backgroundColor: 'white',
     padding: 20,
+    margin: 20, // Crée un espace autour du modal
+    borderRadius: 8, // Arrondit les coins
   },
-  title: {
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
+  modalTitle: {
     marginBottom: 15,
   },
-  button: {
-    marginTop: 10,
+  modalText: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Aligne les boutons à droite
+    marginTop: 20,
   },
 });

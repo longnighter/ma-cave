@@ -36,7 +36,7 @@ serve(async (req) => {
                     "grape": { "type": "ARRAY", "minItems": 1, "maxItems": 4, "items": { "type": "STRING" } },
                     "region":{"type":"STRING"},
                     "tastingNotes": { "type": "ARRAY", "minItems": 1, "maxItems": 10, "items": { "type": "STRING" } },
-                    "year": {"type": "STRING"},
+                    "year": {"type": "INTEGER"},
                     "name": {"type": "STRING"}
                 }
             }
