@@ -70,24 +70,7 @@ serve(async (req) => {
 
   // } 
   try {
-    const wineInfo = {
-      "appellation": "Bourgogne Côte Chalonnaise",
-      "bestToDrink": [
-          2024,
-          2028
-      ],
-      "grape": [
-          "Pinot Noir"
-      ],
-      "region": "Bourgogne",
-      "tastingNotes": [
-          "Notes de fruits rouges (cerise, framboise)",
-          "Légèrement épicé",
-          "Tannins souples",
-          "Belle fraîcheur"
-      ],
-      "year": 2022
-    }
+    const wineInfo = {"appellation": "Lalande de Pomerol", "bestToDrink": [2020, 2025], "domain": "Château Pavillon Beauregard", "grape": ["Merlot", "Cabernet Franc"], "name": "Château Pavillon Beauregard Lalande de Pomerol 2016", "region": "Bordeaux", "tastingNotes": ["Fruits rouges mûrs", "Cassis", "Notes de sous-bois", "Épices douces", "Tannins soyeux", "Belle persistance"], "year": 2016}
     return new Response(
       JSON.stringify(wineInfo),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
