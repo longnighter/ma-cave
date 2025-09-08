@@ -1,3 +1,4 @@
+import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -14,6 +15,12 @@ export default function AddWineScreen() {
   const [name, setName] = useState('');
   const [year, setYear] = useState('');
   const [region, setRegion] = useState('');
+  const [appellation, setAppellation] = useState('');
+  const [grape, setGrape] = useState('');
+  const [tastingNotes, setTastingNotes] = useState([]);
+  const [bestToDrink, setBestToDrink] = useState();
+  const [domain, setDomain] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // --- SECTION 2: LA LOGIQUE DE SAUVEGARDE ---
   const handleSave = () => {
@@ -27,8 +34,14 @@ export default function AddWineScreen() {
     const newWine = {
       id: uuid.v4() as string, // On génère un ID unique basé sur la date actuelle
       name: name,
-      year: parseInt(year, 10), // On convertit l'année (texte) en nombre
-      region: region
+      year: parseInt(year,10), // On convertit l'année (texte) en nombre
+      region: region, 
+      appellation: appellation,
+      grape: grape,
+      tastingNotes: tastingNotes,
+      bestToDrink: bestToDrink,
+      domain: domain
+
     };
 
     // Pour l'instant, on affiche le résultat dans la console du terminal
@@ -38,6 +51,36 @@ export default function AddWineScreen() {
     // Finalement, on retourne à l'écran précédent (la liste)
     router.back();
   };
+
+  const handleGenerateInfo = async () => {
+    if (!name) {
+      alert('Veuillez renseigner le nom');
+      return;
+    }
+    setIsGenerating(true)
+    try{
+      const { data, error } = await supabase.functions.invoke("geminiGetWineInfo",{"body":{"name":name}})
+      console.log(data)
+      if (error) throw error;
+
+      setName(data.name)
+      setYear(data.year)
+      setRegion(data.region)
+      setAppellation(data.appellation)
+      setGrape(data.grape)
+      setBestToDrink(data.bestToDrink)
+      setTastingNotes(data.tastingNotes)
+      setDomain(data.domain)
+    }
+    catch (error: any){
+      alert(`Something went wrong. Error :${error.message}`)
+      console.error(error)
+      return;
+    }
+    finally{
+      setIsGenerating(false)
+    }
+  }
 
   // --- SECTION 3: LE RENDU VISUEL (JSX) ---
   return (
@@ -50,7 +93,7 @@ export default function AddWineScreen() {
         onChangeText={setName} // Chaque frappe met à jour l'état "name"
         style={styles.input}
       />
-
+    
       <TextInput
         label="Millésime (année)"
         value={year}
@@ -73,6 +116,17 @@ export default function AddWineScreen() {
       >
         Ajouter à la cave
       </Button>
+
+      <Button 
+        mode="text" 
+        onPress={handleGenerateInfo}
+        loading={isGenerating}
+        disabled={isGenerating}
+        style={styles.button}
+      >
+        Générer les infos avec Gemini
+      </Button>
+
     </View>
   );
 }

@@ -377,6 +377,7 @@ Assurez-vous que tous les outils suivants sont installés sur votre Mac.
 6.  **Code de la fonction (`supabase/functions/geminiGetWineInfo/index.ts`) :**
     *(Contient la logique `fetch` vers l'API Gemini, la construction du prompt, le schema et le parsing de la réponse).*
 7.  **Déployez :** `supabase functions deploy geminiGetWineInfo --no-verify-jwt`.
+8.  **Testez :** `supabase functions serve --env-file ./supabase/.env.local geminiGetWineInfo --no-verify-jwt`
 
 ---
 ## Chapitre 11 : Connexion Finale de l'Application
