@@ -42,57 +42,57 @@ serve(async (req) => {
             }
         }
   }
-  try {
-    // 4. Make the REQUEST to the Gemini API
-    const geminiResponse = await fetch(`${GEMINI_API_URL}`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        "X-goog-api-key": GEMINI_API_KEY
-      },
-      //body: JSON.stringify(requestData),
-      body: JSON.stringify(requestData)
-    });
-
-    if (!geminiResponse.ok) {
-      throw new Error(`Gemini API responded with status ${geminiResponse.status}`);
-    }
-    
-    const geminiData = await geminiResponse.json();
-    const jsonText = geminiData.candidates[0].content.parts[0].text;
-    const wineInfo = JSON.parse(jsonText);
-
-    // 5. Send the RESPONSE from Gemini back to our mobile app
-    return new Response(
-      JSON.stringify(wineInfo),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-    );
-
-  } 
   // try {
-  //   const wineInfo = {
-  //     "appellation": "Bourgogne Côte Chalonnaise",
-  //     "bestToDrink": [
-  //         2024,
-  //         2028
-  //     ],
-  //     "grape": [
-  //         "Pinot Noir"
-  //     ],
-  //     "region": "Bourgogne",
-  //     "tastingNotes": [
-  //         "Notes de fruits rouges (cerise, framboise)",
-  //         "Légèrement épicé",
-  //         "Tannins souples",
-  //         "Belle fraîcheur"
-  //     ],
-  //     "year": 2022
+  //   // 4. Make the REQUEST to the Gemini API
+  //   const geminiResponse = await fetch(`${GEMINI_API_URL}`, {
+  //     method: 'POST',
+  //     headers: { 
+  //       'Content-Type': 'application/json',
+  //       "X-goog-api-key": GEMINI_API_KEY
+  //     },
+  //     //body: JSON.stringify(requestData),
+  //     body: JSON.stringify(requestData)
+  //   });
+
+  //   if (!geminiResponse.ok) {
+  //     throw new Error(`Gemini API responded with status ${geminiResponse.status}`);
   //   }
+    
+  //   const geminiData = await geminiResponse.json();
+  //   const jsonText = geminiData.candidates[0].content.parts[0].text;
+  //   const wineInfo = JSON.parse(jsonText);
+
+  //   // 5. Send the RESPONSE from Gemini back to our mobile app
   //   return new Response(
   //     JSON.stringify(wineInfo),
   //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
   //   );
-  // }
+
+  // } 
+  try {
+    const wineInfo = {
+      "appellation": "Bourgogne Côte Chalonnaise",
+      "bestToDrink": [
+          2024,
+          2028
+      ],
+      "grape": [
+          "Pinot Noir"
+      ],
+      "region": "Bourgogne",
+      "tastingNotes": [
+          "Notes de fruits rouges (cerise, framboise)",
+          "Légèrement épicé",
+          "Tannins souples",
+          "Belle fraîcheur"
+      ],
+      "year": 2022
+    }
+    return new Response(
+      JSON.stringify(wineInfo),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
+  }
   catch (error) {
     // Handle any errors that occur
     return new Response(JSON.stringify({ error: error.message }), {
