@@ -3,9 +3,12 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { Button, Chip, Divider, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
+import { Card, Button, Chip, Divider, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
+import { Background } from '@react-navigation/elements';
+import CardComponent from 'react-native-paper/lib/typescript/components/Card/Card';
+import CardContent from 'react-native-paper/lib/typescript/components/Card/CardContent';
 
 export default function AddWineScreen() {
   const router = useRouter();
@@ -162,67 +165,83 @@ export default function AddWineScreen() {
               >
                 {suggestedWine && (
                     <ScrollView contentContainerStyle={styles.modalContent}>
-                      <Text variant="titleLarge" style={styles.modalSubTitle}>
-                        {suggestedWine.name || name}
-                      </Text>
+
+                      <Card style={styles.infoCard}>
+                        <Card.Content>
+                          <Text variant="titleLarge" style={styles.modalSubTitle}>
+                          {suggestedWine.name || name}
+                        </Text>
+                        </Card.Content>
+                      </Card>
+
                       <Divider style={styles.divider} />
 
-                      {suggestedWine.appellation && (
-                        <View style={styles.detailRow}>
-                          <Text style={styles.detailLabel}>Appellation :</Text>
-                          <Text variant="bodyLarge" >{suggestedWine.appellation}</Text>
-                        </View>
-                      )}
-                      {suggestedWine.region && (
-                        <View style={styles.detailRow}>
-                          <Text variant="titleMedium" style={styles.detailLabel}>Région :</Text>
-                          <Text variant="bodyLarge">{suggestedWine.region}</Text>
-                        </View>
-                      )}
-                      {suggestedWine.year && (
-                        <View style={styles.detailRow}>
-                          <Text variant="titleMedium" style={styles.detailLabel}>Millésime :</Text>
-                          <Text variant="bodyLarge">{suggestedWine.year}</Text>
-                        </View>
-                      )}
-                      {suggestedWine.grape && suggestedWine.grape.length > 0 && (
-                        <View style={styles.detailRow}>
-                          <Text variant="titleMedium" style={styles.detailLabel}>Cépages :</Text>
-                          <Text variant="bodyLarge">{suggestedWine.grape.join(', ')}</Text>
-                        </View>
-                      )}
-                      {suggestedWine.domain && (
-                        <View style={styles.detailRow}>
-                          <Text variant="titleMedium" style={styles.detailLabel}>Domaine :</Text>
-                          <Text variant="bodyLarge">{suggestedWine.domain}</Text>
-                        </View>
-                      )}
+                      <Card style={styles.infoCard}>
+                        <Card.Content>
+                          {suggestedWine.appellation && (
+                            <View style={styles.detailRow}>
+                              <Text style={styles.detailLabel}>Appellation :</Text>
+                              <Text variant="bodyLarge" >{suggestedWine.appellation}</Text>
+                            </View>
+                          )}
+                          {suggestedWine.region && (
+                            <View style={styles.detailRow}>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Région :</Text>
+                              <Text variant="bodyLarge">{suggestedWine.region}</Text>
+                            </View>
+                          )}
+                          {suggestedWine.year && (
+                            <View style={styles.detailRow}>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Millésime :</Text>
+                              <Text variant="bodyLarge">{suggestedWine.year}</Text>
+                            </View>
+                          )}
+                          {suggestedWine.grape && suggestedWine.grape.length > 0 && (
+                            <View style={styles.detailRow}>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Cépages :</Text>
+                              <Text variant="bodyLarge">{suggestedWine.grape.join(', ')}</Text>
+                            </View>
+                          )}
+                          {suggestedWine.domain && (
+                            <View style={styles.detailRow}>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Domaine :</Text>
+                              <Text variant="bodyLarge">{suggestedWine.domain}</Text>
+                            </View>
+                          )}
 
-                      {suggestedWine.bestToDrink && suggestedWine.bestToDrink.length === 2 && (
-                        <View style={styles.detailRow}>
-                          <Text variant="titleMedium" style={styles.detailLabel}>Apogée :</Text>
-                          <Text variant="bodyLarge">{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
-                        </View>
-                      )}
+                          {suggestedWine.bestToDrink && suggestedWine.bestToDrink.length === 2 && (
+                            <View style={styles.detailRow}>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Apogée :</Text>
+                              <Text variant="bodyLarge">{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
+                            </View>
+                          )}
+                        </Card.Content>
+                      </Card>
+
                       <Divider style={styles.divider} />
-                      {suggestedWine.tastingNotes && suggestedWine.tastingNotes.length > 0 && (
-                        <View style={styles.tastingNotesContainer}>
-                          <Text variant="titleMedium" >Notes de dégustation :</Text>
-                          <View style={styles.chipsContainer}>
-                            {suggestedWine.tastingNotes.map((note, index) => (
-                              <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
-                                {note}
-                              </Chip>
-                            ))}
-                          </View>
-                        </View>
-                      )}
+                      <Card style={styles.infoCard}>
+                        <Card.Content>
+                          {suggestedWine.tastingNotes && suggestedWine.tastingNotes.length > 0 && (
+                            <View style={styles.tastingNotesContainer}>
+                              <Text variant="titleMedium" >Notes de dégustation :</Text>
+                              <View style={styles.chipsContainer}>
+                                {suggestedWine.tastingNotes.map((note, index) => (
+                                  <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
+                                    {note}
+                                  </Chip>
+                                ))}
+                              </View>
+                            </View>
+                          )}
+                        </Card.Content>
+                      </Card>
+                      
 
                       <View style={styles.modalButtonContainer} >
-                        <Button onPress={handleUseSuggestion}>
+                        <Button style={styles.modalButton} onPress={handleUseSuggestion} >
                           Utiliser ces infos
                         </Button>
-                        <Button onPress={() => setIsModalVisible(false)}>
+                        <Button style={styles.modalButton} onPress={() => setIsModalVisible(false)}>
                           Annuler
                         </Button>
                       </View>
@@ -255,7 +274,7 @@ const styles = StyleSheet.create({
   button: { marginTop: 10, paddingTop: 8, paddingBottom: 8 },
   // Nouveaux styles pour le modal
   modalContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#d9d7d7ff',
     marginHorizontal: 20,
     borderRadius: 16, // Bords plus arrondis
     maxHeight: '85%',
@@ -273,7 +292,10 @@ const styles = StyleSheet.create({
   modalSubTitle: {
     textAlign: 'center',
     color: '#555',
-    marginBottom: 16,
+    marginBottom: 10,
+    marginTop: 10,
+    fontWeight: "bold",
+    verticalAlign:"middle"
   },
   divider: {
     marginVertical: 16,
@@ -325,6 +347,12 @@ const styles = StyleSheet.create({
   modalButton: {
     flex: 1, // Les boutons prennent la même largeur
     marginHorizontal: 5,
+    alignSelf: "auto",
+    //color: "#dd1818ff",
+    textDecorationColor: "black",
+    borderWidth: 1,
+    borderColor: "verydarkred"
+    
   },
   snackBar:{
     justifyContent: "center",
@@ -334,5 +362,10 @@ const styles = StyleSheet.create({
     top:0,
     paddingLeft:30,
     paddingRight:30
+  },
+  infoCard: {
+    marginBottom: 16, // Espace entre les cartes
+    borderRadius: 12,
+    elevation: 4, // Ombre légère pour effet de bulle
   }
 });
