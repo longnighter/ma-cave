@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { useWines } from '../../context/WineContext';
 
 export default function TabLayout() {
   return (
@@ -7,7 +8,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index" // Ce nom fait référence au fichier index.tsx
         options={{
-          title: 'Ma Cave',
+          title: `Ma Cave - ${useWines().wines.length} vins`,
         }}
       />
     </Tabs>

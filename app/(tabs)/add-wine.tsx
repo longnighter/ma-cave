@@ -105,7 +105,7 @@ export default function AddWineScreen() {
   // --- SECTION 3: LE RENDU VISUEL (JSX) ---
   return (
     <>
-      <GestureHandlerRootView>
+      <GestureHandlerRootView style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
         <ScrollView style={styles.container}>
           <Text variant="headlineMedium" style={styles.title}>Ajouter un nouveau vin</Text>
           
@@ -150,89 +150,97 @@ export default function AddWineScreen() {
           </Button>
 
         </ScrollView>
-        <Portal>
-          <Modal
-            visible={isModalVisible}
-            onDismiss={() => setIsModalVisible(false)}
-            contentContainerStyle={styles.modalContainer}
-          >
-            {suggestedWine && (
-              <ScrollView contentContainerStyle={styles.modalContent}>
-                <View>
-                  <Text variant="headlineMedium" style={styles.modalTitle}>Vin trouvé: {suggestedWine.name || name}</Text>
-                  <Divider style={styles.divider} />
-                  <Text variant="bodyMedium">Nom</Text>
-                  <Text>{suggestedWine.name}</Text>
-                  {suggestedWine.appellation && (
-                    <View style={styles.detailRow}>
-                      <Text variant="titleMedium" style={styles.detailLabel}>Appellation :</Text>
-                      <Text variant="bodyLarge">{suggestedWine.appellation}</Text>
-                    </View>
-                  )}
-                  {suggestedWine.region && (
-                    <View style={styles.detailRow}>
-                      <Text variant="titleMedium" style={styles.detailLabel}>Région :</Text>
-                      <Text variant="bodyLarge">{suggestedWine.region}</Text>
-                    </View>
-                  )}
-                  {suggestedWine.year && (
-                    <View style={styles.detailRow}>
-                      <Text variant="titleMedium" style={styles.detailLabel}>Millésime :</Text>
-                      <Text variant="bodyLarge">{suggestedWine.year}</Text>
-                    </View>
-                  )}
-                  {suggestedWine.grape && suggestedWine.grape.length > 0 && (
-                    <View style={styles.detailRow}>
-                      <Text variant="titleMedium" style={styles.detailLabel}>Cépages :</Text>
-                      <Text variant="bodyLarge">{suggestedWine.grape.join(', ')}</Text>
-                    </View>
-                  )}
-                  {suggestedWine.domain && (
-                    <View style={styles.detailRow}>
-                      <Text variant="titleMedium" style={styles.detailLabel}>Domaine :</Text>
-                      <Text variant="bodyLarge">{suggestedWine.domain}</Text>
-                    </View>
-                  )}
+        {(isModalVisible || isAddWineSnackVisible) && (
+          <Portal>
+            <GestureHandlerRootView 
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <Modal
+                visible={isModalVisible}
+                onDismiss={() => setIsModalVisible(false)}
+                contentContainerStyle={styles.modalContainer}
+              >
+                {suggestedWine && (
+                    <ScrollView contentContainerStyle={styles.modalContent}>
+                      <Text variant="titleLarge" style={styles.modalSubTitle}>
+                        {suggestedWine.name || name}
+                      </Text>
+                      <Divider style={styles.divider} />
 
-                  {suggestedWine.bestToDrink && suggestedWine.bestToDrink.length === 2 && (
-                    <View style={styles.detailRow}>
-                      <Text variant="titleMedium" style={styles.detailLabel}>Apogée :</Text>
-                      <Text variant="bodyLarge">{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
-                    </View>
-                  )}
-                  {suggestedWine.tastingNotes && suggestedWine.tastingNotes.length > 0 && (
-                    <View style={styles.tastingNotesContainer}>
-                      <Text variant="titleMedium" style={styles.detailLabel}>Notes de dégustation :</Text>
-                      {suggestedWine.tastingNotes.map((note, index) => (
-                        <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
-                          {note}
-                        </Chip>
-                      ))}
-                    </View>
-                  )}
+                      {suggestedWine.appellation && (
+                        <View style={styles.detailRow}>
+                          <Text style={styles.detailLabel}>Appellation :</Text>
+                          <Text variant="bodyLarge" >{suggestedWine.appellation}</Text>
+                        </View>
+                      )}
+                      {suggestedWine.region && (
+                        <View style={styles.detailRow}>
+                          <Text variant="titleMedium" style={styles.detailLabel}>Région :</Text>
+                          <Text variant="bodyLarge">{suggestedWine.region}</Text>
+                        </View>
+                      )}
+                      {suggestedWine.year && (
+                        <View style={styles.detailRow}>
+                          <Text variant="titleMedium" style={styles.detailLabel}>Millésime :</Text>
+                          <Text variant="bodyLarge">{suggestedWine.year}</Text>
+                        </View>
+                      )}
+                      {suggestedWine.grape && suggestedWine.grape.length > 0 && (
+                        <View style={styles.detailRow}>
+                          <Text variant="titleMedium" style={styles.detailLabel}>Cépages :</Text>
+                          <Text variant="bodyLarge">{suggestedWine.grape.join(', ')}</Text>
+                        </View>
+                      )}
+                      {suggestedWine.domain && (
+                        <View style={styles.detailRow}>
+                          <Text variant="titleMedium" style={styles.detailLabel}>Domaine :</Text>
+                          <Text variant="bodyLarge">{suggestedWine.domain}</Text>
+                        </View>
+                      )}
 
-                  <View style={styles.modalButtonContainer} >
-                    <Button onPress={handleUseSuggestion}>
-                      Utiliser ces infos
-                    </Button>
-                    <Button onPress={() => setIsModalVisible(false)}>
-                      Annuler
-                    </Button>
-                  </View>
-                </View>
-              </ScrollView>
-            )}
-          </Modal>
-          <Snackbar 
-            onDismiss={() => setIsAddWineSnackVisible(false)}
-            duration={3000}
-            visible={isAddWineSnackVisible}
-            wrapperStyle={styles.snackBar}
-            style={styles.snackBar}
-          >
-            Vin ajouté à la base de donnée
-          </Snackbar>
-        </Portal>
+                      {suggestedWine.bestToDrink && suggestedWine.bestToDrink.length === 2 && (
+                        <View style={styles.detailRow}>
+                          <Text variant="titleMedium" style={styles.detailLabel}>Apogée :</Text>
+                          <Text variant="bodyLarge">{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
+                        </View>
+                      )}
+                      <Divider style={styles.divider} />
+                      {suggestedWine.tastingNotes && suggestedWine.tastingNotes.length > 0 && (
+                        <View style={styles.tastingNotesContainer}>
+                          <Text variant="titleMedium" >Notes de dégustation :</Text>
+                          <View style={styles.chipsContainer}>
+                            {suggestedWine.tastingNotes.map((note, index) => (
+                              <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
+                                {note}
+                              </Chip>
+                            ))}
+                          </View>
+                        </View>
+                      )}
+
+                      <View style={styles.modalButtonContainer} >
+                        <Button onPress={handleUseSuggestion}>
+                          Utiliser ces infos
+                        </Button>
+                        <Button onPress={() => setIsModalVisible(false)}>
+                          Annuler
+                        </Button>
+                      </View>
+                    </ScrollView>
+                )}
+              </Modal>
+              <Snackbar 
+                onDismiss={() => setIsAddWineSnackVisible(false)}
+                duration={3000}
+                visible={isAddWineSnackVisible}
+                wrapperStyle={styles.snackBar}
+                style={styles.snackBar}
+              >
+                Vin ajouté à la base de donnée
+              </Snackbar>
+            </GestureHandlerRootView>
+          </Portal>
+        )}
       </GestureHandlerRootView>
     </>
   );
@@ -248,22 +256,28 @@ const styles = StyleSheet.create({
   // Nouveaux styles pour le modal
   modalContainer: {
     backgroundColor: 'white',
-    marginHorizontal: 16, // Moins de marge sur les côtés
-    borderRadius: 12,     // Bords plus arrondis
-    maxHeight: '80%',     // Limiter la hauteur du modal
-    overflow: 'hidden',   // S'assurer que le contenu ne déborde pas
+    marginHorizontal: 20,
+    borderRadius: 16, // Bords plus arrondis
+    maxHeight: '85%',
+    overflow: 'hidden',
   },
   modalContent: {
-    padding: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
   },
   modalTitle: {
-    marginBottom: 15,
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#333',
   },
+  modalSubTitle: {
+    textAlign: 'center',
+    color: '#555',
+    marginBottom: 16,
+  },
   divider: {
-    marginVertical: 15,
+    marginVertical: 16,
+    height: 1.5,
   },
   detailRow: {
     flexDirection: 'row',
@@ -273,19 +287,29 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontWeight: 'bold',
     marginRight: 8,
-    color: '#555',
+    color: '#111',
+    //fontSize: 16,
+  },
+  detailValue: {
+    fontSize: 16,
+    color: '#444',
   },
   tastingNotesContainer: {
-    marginTop: 15,
-    marginBottom: 10,
-    flexDirection: 'row', // Pour aligner les chips
-    flexWrap: 'wrap',     // Permet aux chips de passer à la ligne
-    alignItems: 'center',
+    marginTop: 10,
+    //marginBottom: 10,
+    //flexDirection: 'row', // Pour aligner les chips
+    //lexWrap: 'wrap',     // Permet aux chips de passer à la ligne
+    //alignItems: 'center',
+  },
+    chipsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
   },
   chip: {
     marginRight: 6,
     marginBottom: 6,
-    backgroundColor: '#e0e0e0', // Couleur de fond du chip
+    backgroundColor: '#ef9ef985', // Couleur de fond du chip
   },
   chipText: {
     fontSize: 13,
@@ -296,7 +320,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     paddingTop: 15,
     borderTopWidth: 1, // Une petite bordure pour séparer les boutons du contenu
-    borderTopColor: '#f0f0f0',
+    borderTopColor: '#eee',
   },
   modalButton: {
     flex: 1, // Les boutons prennent la même largeur
