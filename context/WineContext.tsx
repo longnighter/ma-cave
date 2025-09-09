@@ -4,7 +4,7 @@ import { Wine } from '../models/Wine';
 
 interface WineContextType {
   wines: Wine[];
-  addWine: (wine: Wine) => Promise<void>; // La fonction est maintenant asynchrone
+  addWine: (wine: Omit<Wine,"id">) => Promise<void>; // La fonction est maintenant asynchrone
   loading: boolean;
 }
 
@@ -39,11 +39,10 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
     fetchWines();
   }, []);
 
-  const addWine = async (wineToAdd: Wine) => {
+  const addWine = async (wineToAdd: Omit< Wine, "id">) => {
     const { data, error } = await supabase
       .from('wines')
       .insert({ 
-        id: wineToAdd.id, 
         name: wineToAdd.name,
         year: wineToAdd.year,
         region: wineToAdd.region,
@@ -51,7 +50,9 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
         drink_from: wineToAdd.bestToDrink?.[0],
         drink_to: wineToAdd.bestToDrink?.[1],
         tasting_notes: wineToAdd.tastingNotes,
-        appellation: wineToAdd.appellation
+        appellation: wineToAdd.appellation,
+        wine_pairing: wineToAdd.winePairing,
+        domain: wineToAdd.domain
        })
       .select()
       .single();
@@ -61,9 +62,7 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
     } 
     else if (data) {
       const newWineFormatted = {
-        ...data,
-        bestToDrink: [data.drink_from, data.drink_to],
-        tastingNotes: data.tasting_notes,
+        ...data
       };
       setWines(currentWines => [newWineFormatted, ...currentWines]);
     }

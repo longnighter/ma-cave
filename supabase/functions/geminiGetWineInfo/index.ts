@@ -37,7 +37,8 @@ serve(async (req) => {
                     "region":{"type":"STRING"},
                     "tastingNotes": { "type": "ARRAY", "minItems": 1, "maxItems": 10, "items": { "type": "STRING" } },
                     "year": {"type": "INTEGER"},
-                    "name": {"type": "STRING"}
+                    "name": {"type": "STRING"},
+                    "winePairing": {"type":"ARRAY"}, "minItems":1, "maxItems": 10, "items": {"type":"STRING"}
                 }
             }
         }
@@ -70,7 +71,7 @@ serve(async (req) => {
 
   // } 
   try {
-    const wineInfo = {"appellation": "Lalande de Pomerol", "bestToDrink": [2020, 2025], "domain": "Château Pavillon Beauregard", "grape": ["Merlot", "Cabernet Franc"], "name": "Château Pavillon Beauregard Lalande de Pomerol 2016", "region": "Bordeaux", "tastingNotes": ["Fruits rouges mûrs", "Cassis", "Notes de sous-bois", "Épices douces", "Tannins soyeux", "Belle persistance"], "year": 2016}
+    const wineInfo = {"appellation": "Lalande de Pomerol", "winePairing": ["Fromage"], "bestToDrink": [2020, 2025], "domain": "Château Pavillon Beauregard", "grape": ["Merlot", "Cabernet Franc"], "name": "Château Pavillon Beauregard Lalande de Pomerol 2016", "region": "Bordeaux", "tastingNotes": ["Fruits rouges mûrs", "Cassis", "Notes de sous-bois", "Épices douces", "Tannins soyeux", "Belle persistance"], "year": 2016}
     return new Response(
       JSON.stringify(wineInfo),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },

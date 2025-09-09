@@ -7,5 +7,6 @@ export interface Wine {
   appellation?: string;
   bestToDrink?: [number, number]; // Un tuple de deux nombres (année de début, année de fin)
   tastingNotes?: string[];
-  domain?: string;       // Un tableau de chaînes de caractères
+  domain?: string;   
+  winePairing?: string[];    // Un tableau de chaînes de caractères
 }

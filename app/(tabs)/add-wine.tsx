@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { Button, Modal, Portal, Text, TextInput } from 'react-native-paper';
-import uuid from "react-native-uuid";
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
 
@@ -23,6 +22,7 @@ export default function AddWineScreen() {
   const [tastingNotes, setTastingNotes] = useState([""]);
   const [bestToDrink, setBestToDrink] = useState(defaultTuple);
   const [domain, setDomain] = useState('');
+  const [winePairing, setWinePairing] = useState([""]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [suggestedWine, setSuggestedWine] = useState<Wine | null>(null);
@@ -37,7 +37,6 @@ export default function AddWineScreen() {
 
     // On crée notre nouvel objet vin avec les données de l'état
     const newWine = {
-      id: uuid.v4() as string, // On génère un ID unique basé sur la date actuelle
       name: name,
       year: year, // On convertit l'année (texte) en nombre
       region: region, 
@@ -45,8 +44,8 @@ export default function AddWineScreen() {
       grape: grape,
       tastingNotes: tastingNotes,
       bestToDrink: bestToDrink,
-      domain: domain
-
+      domain: domain,
+      winePairing: winePairing
     };
 
     // Pour l'instant, on affiche le résultat dans la console du terminal
@@ -92,8 +91,12 @@ export default function AddWineScreen() {
       setBestToDrink(suggestedWine.bestToDrink || defaultTuple);
       setTastingNotes(suggestedWine.tastingNotes || [""])
       setDomain(suggestedWine.domain || "")
+      setWinePairing(suggestedWine.winePairing || [""])
 
-      handleSave()
+
+      addWine(suggestedWine);
+      setIsModalVisible(false)
+      router.navigate("/")
     }
   };
 
