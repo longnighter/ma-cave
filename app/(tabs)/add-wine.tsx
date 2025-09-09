@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { Button, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
+import { Button, Chip, Divider, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
 
@@ -18,7 +18,7 @@ export default function AddWineScreen() {
   const [year, setYear] = useState(Number);
   const [region, setRegion] = useState('');
   const [appellation, setAppellation] = useState(String);
-  const [grape, setGrape] = useState('');
+  const [grape, setGrape] = useState([""]);
   const [tastingNotes, setTastingNotes] = useState([""]);
   const [bestToDrink, setBestToDrink] = useState(defaultTuple);
   const [domain, setDomain] = useState('');
@@ -88,7 +88,7 @@ export default function AddWineScreen() {
       setYear(suggestedWine.year)
       setRegion(suggestedWine.region || "")
       setAppellation(suggestedWine.appellation || "")
-      setGrape(suggestedWine.grape || "")
+      setGrape(suggestedWine.grape || [])
       setBestToDrink(suggestedWine.bestToDrink || defaultTuple);
       setTastingNotes(suggestedWine.tastingNotes || [""])
       setDomain(suggestedWine.domain || "")
@@ -157,27 +157,70 @@ export default function AddWineScreen() {
             contentContainerStyle={styles.modalContainer}
           >
             {suggestedWine && (
-              <View>
-                <Text variant="headlineSmall" style={styles.modalTitle}>Vin trouvé</Text>
-                <Text variant="bodyMedium">Nom</Text>
-                <Text>{suggestedWine.name}</Text>
-                <Text>Appellation: {suggestedWine.appellation}</Text>
-                <Text>Région: {suggestedWine.region}</Text>
-                <Text>Millésime: {suggestedWine.year}  </Text>
-                <Text>Cépage(s): {suggestedWine.grape} </Text>
-                <Text>Domaine: {suggestedWine.domain} </Text>
-                <Text>Apogée: de {suggestedWine.bestToDrink[0]} à {suggestedWine.bestToDrink[1]} </Text>
-                <Text>Notes arômatiques: {suggestedWine.tastingNotes} </Text>
+              <ScrollView contentContainerStyle={styles.modalContent}>
+                <View>
+                  <Text variant="headlineMedium" style={styles.modalTitle}>Vin trouvé: {suggestedWine.name || name}</Text>
+                  <Divider style={styles.divider} />
+                  <Text variant="bodyMedium">Nom</Text>
+                  <Text>{suggestedWine.name}</Text>
+                  {suggestedWine.appellation && (
+                    <View style={styles.detailRow}>
+                      <Text variant="titleMedium" style={styles.detailLabel}>Appellation :</Text>
+                      <Text variant="bodyLarge">{suggestedWine.appellation}</Text>
+                    </View>
+                  )}
+                  {suggestedWine.region && (
+                    <View style={styles.detailRow}>
+                      <Text variant="titleMedium" style={styles.detailLabel}>Région :</Text>
+                      <Text variant="bodyLarge">{suggestedWine.region}</Text>
+                    </View>
+                  )}
+                  {suggestedWine.year && (
+                    <View style={styles.detailRow}>
+                      <Text variant="titleMedium" style={styles.detailLabel}>Millésime :</Text>
+                      <Text variant="bodyLarge">{suggestedWine.year}</Text>
+                    </View>
+                  )}
+                  {suggestedWine.grape && suggestedWine.grape.length > 0 && (
+                    <View style={styles.detailRow}>
+                      <Text variant="titleMedium" style={styles.detailLabel}>Cépages :</Text>
+                      <Text variant="bodyLarge">{suggestedWine.grape.join(', ')}</Text>
+                    </View>
+                  )}
+                  {suggestedWine.domain && (
+                    <View style={styles.detailRow}>
+                      <Text variant="titleMedium" style={styles.detailLabel}>Domaine :</Text>
+                      <Text variant="bodyLarge">{suggestedWine.domain}</Text>
+                    </View>
+                  )}
 
-                <View style={styles.modalButtonContainer} >
-                  <Button onPress={handleUseSuggestion}>
-                    Utiliser ces infos
-                  </Button>
-                  <Button onPress={() => setIsModalVisible(false)}>
-                    Annuler
-                  </Button>
+                  {suggestedWine.bestToDrink && suggestedWine.bestToDrink.length === 2 && (
+                    <View style={styles.detailRow}>
+                      <Text variant="titleMedium" style={styles.detailLabel}>Apogée :</Text>
+                      <Text variant="bodyLarge">{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
+                    </View>
+                  )}
+                  {suggestedWine.tastingNotes && suggestedWine.tastingNotes.length > 0 && (
+                    <View style={styles.tastingNotesContainer}>
+                      <Text variant="titleMedium" style={styles.detailLabel}>Notes de dégustation :</Text>
+                      {suggestedWine.tastingNotes.map((note, index) => (
+                        <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
+                          {note}
+                        </Chip>
+                      ))}
+                    </View>
+                  )}
+
+                  <View style={styles.modalButtonContainer} >
+                    <Button onPress={handleUseSuggestion}>
+                      Utiliser ces infos
+                    </Button>
+                    <Button onPress={() => setIsModalVisible(false)}>
+                      Annuler
+                    </Button>
+                  </View>
                 </View>
-              </View>
+              </ScrollView>
             )}
           </Modal>
           <Snackbar 
@@ -205,22 +248,59 @@ const styles = StyleSheet.create({
   // Nouveaux styles pour le modal
   modalContainer: {
     backgroundColor: 'white',
-    padding: 10,
-    margin: 10, // Crée un espace autour du modal
-    borderRadius: 9, // Arrondit les coins
+    marginHorizontal: 16, // Moins de marge sur les côtés
+    borderRadius: 12,     // Bords plus arrondis
+    maxHeight: '80%',     // Limiter la hauteur du modal
+    overflow: 'hidden',   // S'assurer que le contenu ne déborde pas
+  },
+  modalContent: {
+    padding: 20,
   },
   modalTitle: {
-    marginBottom: 40,
-    paddingBlock: 30
+    marginBottom: 15,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#333',
   },
-  modalText: {
-    fontSize: 20,
+  divider: {
+    marginVertical: 15,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline', // Aligne les labels et les valeurs
     marginBottom: 8,
+  },
+  detailLabel: {
+    fontWeight: 'bold',
+    marginRight: 8,
+    color: '#555',
+  },
+  tastingNotesContainer: {
+    marginTop: 15,
+    marginBottom: 10,
+    flexDirection: 'row', // Pour aligner les chips
+    flexWrap: 'wrap',     // Permet aux chips de passer à la ligne
+    alignItems: 'center',
+  },
+  chip: {
+    marginRight: 6,
+    marginBottom: 6,
+    backgroundColor: '#e0e0e0', // Couleur de fond du chip
+  },
+  chipText: {
+    fontSize: 13,
   },
   modalButtonContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end', // Aligne les boutons à droite
-    marginTop: 20,
+    justifyContent: 'space-around', // Distribue l'espace entre les boutons
+    marginTop: 25,
+    paddingTop: 15,
+    borderTopWidth: 1, // Une petite bordure pour séparer les boutons du contenu
+    borderTopColor: '#f0f0f0',
+  },
+  modalButton: {
+    flex: 1, // Les boutons prennent la même largeur
+    marginHorizontal: 5,
   },
   snackBar:{
     justifyContent: "center",

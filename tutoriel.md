@@ -394,6 +394,191 @@ Assurez-vous que tous les outils suivants sont installés sur votre Mac.
     * Créez la fonction `handleGenerateInfo` qui appelle l'Edge Function avec `supabase.functions.invoke(...)`.
 
 ---
+## Chapitre 12 : Améliorer l'UX avec un Popup et un Snackbar
+
+Pour améliorer l'expérience utilisateur, au lieu de remplir automatiquement le formulaire, nous allons afficher les suggestions de l'IA dans un popup (un "Modal"). L'utilisateur pourra alors choisir d'accepter ces suggestions ou de les ignorer. De plus, un message de confirmation discret (un "Snackbar") apparaîtra après l'ajout réussi d'un vin.
+
+#### Étape 1 : Mettre à jour `WineContext` pour signaler le succès
+
+Pour que notre écran sache quand afficher le message de confirmation, notre fonction `addWine` doit nous dire si l'opération a réussi. Nous la modifions pour qu'elle retourne `true` en cas de succès et `false` en cas d'échec.
+
+**Fichier : `context/WineContext.tsx`**
+```typescript
+// Mettez à jour la signature dans l'interface
+interface WineContextType {
+  wines: Wine[];
+  addWine: (wine: Omit<Wine, 'id'>) => Promise<boolean>; // Changer le retour en Promise<boolean>
+  loading: boolean;
+}
+
+// Mettez à jour l'implémentation de la fonction
+const addWine = async (wineToAdd: Omit<Wine, 'id'>): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from('wines')
+    .insert({ /* ...colonnes... */ })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Erreur lors de l'ajout du vin", error);
+    return false; // On retourne false en cas d'échec
+  } 
+  else if (data) {
+    const newWineFormatted = {
+      ...data,
+      bestToDrink: [data.drink_from, data.drink_to],
+      tastingNotes: data.tasting_notes,
+    };
+    setWines(currentWines => [newWineFormatted, ...currentWines]);
+    return true; // On retourne true en cas de succès
+  }
+  return false; // Cas par défaut
+};
+```
+
+#### Étape 2 : Préparer l'état dans l'écran d'ajout
+
+Nous avons besoin de trois nouveaux états dans notre fichier `app/(tabs)/add-wine.tsx` :
+1.  Un pour contrôler la visibilité du popup.
+2.  Un pour stocker temporairement les données reçues de Gemini.
+3.  Un pour contrôler la visibilité du message de confirmation.
+
+```typescript
+// Dans app/(tabs)/add-wine.tsx, à l'intérieur du composant AddWineScreen
+import { Wine } from '@/models/Wine'; // Assurez-vous que l'import est correct
+
+// ...
+const [isModalVisible, setIsModalVisible] = useState(false);
+const [suggestedWine, setSuggestedWine] = useState<Partial<Wine> | null>(null);
+const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
+```
+
+#### Étape 3 : Mettre à jour les fonctions de l'écran
+
+Nous adaptons nos fonctions `handleGenerateInfo`, `handleUseSuggestion`, et `handleSave` pour utiliser notre nouvelle logique de popup et de snackbar.
+
+**Fichier : `app/(tabs)/add-wine.tsx`**
+
+```typescript
+// Met à jour l'état avec les suggestions de l'IA et ouvre le modal
+const handleGenerateInfo = async () => {
+  // ...
+  try {
+    const { data, error } = await supabase.functions.invoke('geminiGetWineInfo', { /*...*/ });
+    if (error) throw error;
+    
+    setSuggestedWine(data);
+    setIsModalVisible(true);
+  } catch (error: any) {
+    // ...
+  } finally {
+    // ...
+  }
+};
+
+// Logique du bouton "Utiliser" dans le popup : remplit le formulaire principal
+const handleUseSuggestion = () => {
+  if (suggestedWine) {
+    setName(suggestedWine.name || name);
+    setYear(suggestedWine.year?.toString() || year);
+    setAppellation(suggestedWine.appellation || '');
+    setRegion(suggestedWine.region || '');
+    setDomain(suggestedWine.domain || '');
+    setGrape(suggestedWine.grape?.join(', ') || '');
+    setTastingNotes(suggestedWine.tastingNotes?.join(', ') || '');
+    setBestToDrink(suggestedWine.bestToDrink?.join(' - ') || '');
+
+    // On ferme le modal
+    setIsModalVisible(false);
+  }
+};
+
+// Met à jour handleSave pour utiliser le retour de addWine et afficher le Snackbar
+const handleSave = async () => {
+  if (!name || !year) {
+    alert("Veuillez renseigner au moins le nom et l'année.");
+    return;
+  }
+  
+  const newWine = { /* ...création de l'objet vin sans id... */ };
+  
+  const success = await addWine(newWine);
+  
+  if (success) {
+    setIsSnackbarVisible(true); // Affiche le message de succès
+    // On attend un court instant pour que l'utilisateur voie le message avant de revenir en arrière
+    setTimeout(() => {
+      router.back();
+    }, 1500);
+  } else {
+    alert("Erreur lors de la sauvegarde du vin.");
+  }
+};
+```
+
+#### Étape 4 : Ajouter le JSX du Modal et du Snackbar
+
+Nous ajoutons le code visuel pour nos popups dans le `return` du composant `AddWineScreen`.
+
+**Fichier : `app/(tabs)/add-wine.tsx`**
+```typescript
+return (
+  <>
+    <ScrollView>
+      {/* ... Votre formulaire ... */}
+    </ScrollView>
+
+    {/* Le Popup Modal */}
+    <Portal>
+      <Modal visible={isModalVisible} onDismiss={() => setIsModalVisible(false)} contentContainerStyle={styles.modalContainer}>
+        {suggestedWine && (
+          <View>
+            <Text variant="headlineSmall">Suggestions de l'IA</Text>
+            {/* ... Affichage des données de suggestedWine ... */}
+            <View style={styles.modalButtonContainer}>
+              <Button onPress={handleUseSuggestion}>Utiliser</Button>
+              <Button onPress={() => setIsModalVisible(false)}>Annuler</Button>
+            </View>
+          </View>
+        )}
+      </Modal>
+    </Portal>
+
+    {/* Le message de confirmation Snackbar */}
+    <Snackbar
+      visible={isSnackbarVisible}
+      onDismiss={() => setIsSnackbarVisible(false)}
+      duration={1500} // Durée avant de disparaître automatiquement
+    >
+      Vin ajouté à la cave !
+    </Snackbar>
+  </>
+);
+```
+
+#### Étape 5 : Ajouter les styles pour les popups
+
+Ajoutez ces nouvelles règles à votre objet `styles` à la fin de votre fichier `add-wine.tsx`.
+
+```typescript
+const styles = StyleSheet.create({
+  // ... vos styles existants ...
+  
+  // Nouveaux styles pour le modal et le snackbar
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 20,
+    borderRadius: 8,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 20,
+  },
+});
+```
+---
 
 ## Annexe A : Guide de Dépannage
 
@@ -405,3 +590,88 @@ Assurez-vous que tous les outils suivants sont installés sur votre Mac.
 * **La fonction locale ne trouve pas les secrets (`undefined`) :** Créer `supabase/.env.local` et redémarrer le serveur, ou utiliser le flag `--env-file`.
 * **`Invalid JWT` lors du test de la fonction :** Redéployez avec le flag `--no-verify-jwt`.
 * **`supabase start` échoue avec des erreurs Docker :** Vérifier que Docker Desktop est lancé, vérifier l'espace disque, utiliser `docker system prune -a` pour nettoyer.
+
+## Annexe B : Guide du Workflow Git : Fusionner une Branche (Merge)
+
+Ce guide décrit la procédure standard et professionnelle pour intégrer le travail d'une branche de fonctionnalité (par exemple, `feature/gemini-popup`) dans votre branche principale (`main`) une fois que la fonctionnalité est terminée et testée.
+
+### Le Principe
+
+La fusion se fait toujours en se plaçant sur la branche qui **reçoit** les modifications. On se place sur `main` et on lui demande de "tirer" les commits de la branche de fonctionnalité.
+
+---
+
+### Étape 1 : Préparer votre branche de fonctionnalité
+
+Avant de fusionner, assurez-vous que tout votre travail sur la branche de fonctionnalité est sauvegardé.
+
+1.  **Vérifiez le statut de vos fichiers :**
+    ```bash
+    git status
+    ```
+    *(Cette commande vous montrera s'il y a des fichiers modifiés non sauvegardés).*
+
+2.  **Sauvegardez vos changements :** Si vous avez des modifications, créez un commit.
+    ```bash
+    # Prépare tous les fichiers modifiés
+    git add .
+
+    # Crée un "instantané" de votre travail avec un message clair
+    git commit -m "Feat: Finalisation de la fonctionnalité X"
+    ```
+
+3.  **Poussez votre branche sur GitHub :** C'est une bonne pratique pour avoir une sauvegarde en ligne avant la fusion.
+    ```bash
+    git push origin feature/gemini-popup
+    ```
+
+### Étape 2 : Préparer la branche `main`
+
+Vous devez maintenant vous assurer que votre branche `main` locale est à jour avec la version sur GitHub.
+
+1.  **Passez sur la branche `main` :**
+    ```bash
+    git checkout main
+    ```
+
+2.  **Récupérez les dernières modifications de `main` depuis GitHub :**
+    *(Cette étape est cruciale si plusieurs personnes travaillent sur le projet pour éviter les conflits).*
+    ```bash
+    git pull origin main
+    ```
+
+### Étape 3 : Fusionner (Merge)
+
+C'est l'opération principale. Vous êtes sur `main`, et vous allez y intégrer les commits de votre branche de fonctionnalité.
+
+1.  **Lancez la commande de fusion :**
+    ```bash
+    git merge feature/gemini-popup
+    ```
+    *Le terminal affichera la liste des fichiers qui ont été mis à jour.*
+
+### Étape 4 : Finaliser
+
+Votre branche `main` locale est maintenant à jour. La dernière étape est de synchroniser ce changement avec GitHub.
+
+1.  **Poussez la branche `main` fusionnée :**
+    ```bash
+    git push origin main
+    ```
+
+### Étape 5 : Nettoyer (Optionnel mais recommandé)
+
+Maintenant que votre fonctionnalité est intégrée à `main`, la branche `feature/gemini-popup` n'est plus nécessaire. Vous pouvez la supprimer pour garder votre projet propre.
+
+1.  **Supprimez la branche locale :**
+    ```bash
+    git branch -d feature/gemini-popup
+    ```
+    *(Le `-d` est une suppression "sûre" qui ne fonctionnera que si la branche a bien été fusionnée. Utilisez `-D` pour forcer la suppression).*
+
+2.  **Supprimez la branche distante (sur GitHub) :**
+    ```bash
+    git push origin --delete feature/gemini-popup
+    ```
+
+Votre fonctionnalité est maintenant proprement intégrée et votre espace de travail est nettoyé.
