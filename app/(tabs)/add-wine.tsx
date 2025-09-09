@@ -185,6 +185,7 @@ export default function AddWineScreen() {
             duration={3000}
             visible={isAddWineSnackVisible}
             wrapperStyle={styles.snackBar}
+            style={styles.snackBar}
           >
             Vin ajouté à la base de donnée
           </Snackbar>
