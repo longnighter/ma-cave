@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { Button, Modal, Portal, Text, TextInput } from 'react-native-paper';
+import { Button, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
 
@@ -26,6 +26,7 @@ export default function AddWineScreen() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [suggestedWine, setSuggestedWine] = useState<Wine | null>(null);
+  const [isAddWineSnackVisible, setIsAddWineSnackVisible] = useState(false)
 
   // --- SECTION 2: LA LOGIQUE DE SAUVEGARDE ---
   const handleSave = () => {
@@ -80,7 +81,7 @@ export default function AddWineScreen() {
     }
   }
 
-  const handleUseSuggestion = () => {
+  const handleUseSuggestion = async () => {
     if (suggestedWine) {
     
       setName(suggestedWine.name)
@@ -94,7 +95,8 @@ export default function AddWineScreen() {
       setWinePairing(suggestedWine.winePairing || [""])
 
 
-      addWine(suggestedWine);
+      const confirmAddWine = await addWine(suggestedWine);
+      if (confirmAddWine) {setIsAddWineSnackVisible(true)}
       setIsModalVisible(false)
       router.navigate("/")
     }
@@ -178,6 +180,14 @@ export default function AddWineScreen() {
               </View>
             )}
           </Modal>
+          <Snackbar 
+            onDismiss={() => setIsAddWineSnackVisible(false)}
+            duration={3000}
+            visible={isAddWineSnackVisible}
+            wrapperStyle={styles.snackBar}
+          >
+            Vin ajouté à la base de donnée
+          </Snackbar>
         </Portal>
       </GestureHandlerRootView>
     </>
@@ -211,4 +221,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', // Aligne les boutons à droite
     marginTop: 20,
   },
+  snackBar:{
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    verticalAlign: "middle",
+    top:0,
+    paddingLeft:30,
+    paddingRight:30
+  }
 });

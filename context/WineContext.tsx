@@ -4,7 +4,7 @@ import { Wine } from '../models/Wine';
 
 interface WineContextType {
   wines: Wine[];
-  addWine: (wine: Omit<Wine,"id">) => Promise<void>; // La fonction est maintenant asynchrone
+  addWine: (wine: Omit<Wine,"id">) => Promise<boolean>; // La fonction est maintenant asynchrone
   loading: boolean;
 }
 
@@ -59,13 +59,17 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
 
     if (error) {
       console.error("Erreur lors de l'ajout du vin", error);
+      return false
     } 
     else if (data) {
       const newWineFormatted = {
         ...data
+
       };
       setWines(currentWines => [newWineFormatted, ...currentWines]);
+      return true
     }
+    return false
   };
 
   return (

@@ -7,7 +7,7 @@ import { useWines } from '../../context/WineContext';
 export default function HomeScreen() {
   const router = useRouter();
   const { wines, loading } = useWines();
-
+  
   if (loading) {
     return (
       <View style={styles.emptyContainer}>
