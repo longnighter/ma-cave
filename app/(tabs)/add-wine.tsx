@@ -238,10 +238,25 @@ export default function AddWineScreen() {
                       
 
                       <View style={styles.modalButtonContainer} >
-                        <Button style={styles.modalButton} onPress={handleUseSuggestion} >
+                        <Button 
+                        style={[styles.modalButton]}
+                        mode="contained"
+                        contentStyle={styles.buttonContent}
+                        buttonColor='#6e0909ff'
+                        textColor='white'
+                        labelStyle={styles.modalButtonLabel}
+                        onPress={handleUseSuggestion} >
                           Utiliser ces infos
                         </Button>
-                        <Button style={styles.modalButton} onPress={() => setIsModalVisible(false)}>
+                        <Button 
+                        mode="outlined"
+                        style={[styles.modalButton, styles.annulerModalButton]} 
+                        textColor="darkred" 
+                        contentStyle={styles.buttonContent}
+                        buttonColor='#d9d7d7ff'
+                        
+                        labelStyle={styles.modalButtonLabel}
+                        onPress={() => setIsModalVisible(false)}>
                           Annuler
                         </Button>
                       </View>
@@ -317,7 +332,7 @@ const styles = StyleSheet.create({
     color: '#444',
   },
   tastingNotesContainer: {
-    marginTop: 10,
+    marginTop: 5,
     //marginBottom: 10,
     //flexDirection: 'row', // Pour aligner les chips
     //lexWrap: 'wrap',     // Permet aux chips de passer à la ligne
@@ -331,28 +346,35 @@ const styles = StyleSheet.create({
   chip: {
     marginRight: 6,
     marginBottom: 6,
-    backgroundColor: '#ef9ef985', // Couleur de fond du chip
+    backgroundColor: '#6e09092a', // Couleur de fond du chip
   },
   chipText: {
     fontSize: 13,
   },
   modalButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around', // Distribue l'espace entre les boutons
-    marginTop: 25,
-    paddingTop: 15,
+    flexDirection: "row",
+    justifyContent: "space-around", // Distribue l'espace entre les boutons
+    marginTop: 15,
+    paddingTop: 20,
     borderTopWidth: 1, // Une petite bordure pour séparer les boutons du contenu
     borderTopColor: '#eee',
   },
-  modalButton: {
-    flex: 1, // Les boutons prennent la même largeur
+  modalButton:{
+    borderRadius:15,
+    flex:1,
+    marginHorizontal: 10,
+    padding:0
+  },
+  annulerModalButton: {
     marginHorizontal: 5,
-    alignSelf: "auto",
-    //color: "#dd1818ff",
-    textDecorationColor: "black",
-    borderWidth: 1,
-    borderColor: "verydarkred"
-    
+    borderColor: '#6e0909ff',
+    borderWidth: 2.5,
+  },
+  buttonContent:{
+    paddingVertical: 5
+  },
+  modalButtonLabel:{
+    fontSize:20
   },
   snackBar:{
     justifyContent: "center",
@@ -364,8 +386,9 @@ const styles = StyleSheet.create({
     paddingRight:30
   },
   infoCard: {
-    marginBottom: 16, // Espace entre les cartes
+    marginBottom: 10, // Espace entre les cartes
+    marginTop:5,
     borderRadius: 12,
-    elevation: 4, // Ombre légère pour effet de bulle
+    elevation: 3, // Ombre légère pour effet de bulle
   }
 });

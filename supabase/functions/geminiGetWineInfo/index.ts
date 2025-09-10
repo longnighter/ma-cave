@@ -38,11 +38,11 @@ serve(async (req) => {
                     "tastingNotes": { "type": "ARRAY", "minItems": 1, "maxItems": 10, "items": { "type": "STRING" } },
                     "year": {"type": "INTEGER"},
                     "name": {"type": "STRING"},
-                    "winePairing": {"type":"ARRAY"}, "minItems":1, "maxItems": 10, "items": {"type":"STRING"}
+                    "winePairing": {"type":"ARRAY", "minItems":1, "maxItems": 10, "items": {"type":"STRING"}}
                 }
             }
         }
-  }
+    }
   // try {
   //   // 4. Make the REQUEST to the Gemini API
   //   const geminiResponse = await fetch(`${GEMINI_API_URL}`, {
