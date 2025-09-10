@@ -17,6 +17,12 @@ export default function TabLayout() {
           title: `Ajouter un vin`
         }}
       />
+      <Tabs.Screen
+        name="[wineId]"
+        options={{
+          title: `Détails`
+        }}
+      />
     </Tabs>
   );
 }

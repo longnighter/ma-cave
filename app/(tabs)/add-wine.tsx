@@ -1,18 +1,24 @@
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Dimensions, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { Button, Card, Chip, Divider, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
 
+const { height: screenHeight } = Dimensions.get('window');
+
 export default function AddWineScreen() {
   const router = useRouter();
   const { addWine } = useWines();
 
-  // --- SECTION 1: L'ÉTAT (STATE) ---
-  // On crée des "boîtes" pour mémoriser la saisie de l'utilisateur pour chaque champ.
+      // Animation refs
+  const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  const backdropAnim = useRef(new Animated.Value(0)).current; // NEW: For backdrop
+
   const defaultTuple: [number, number] = [0,0];
   const [name, setName] = useState('');
   const [year, setYear] = useState(Number);
@@ -28,7 +34,69 @@ export default function AddWineScreen() {
   const [suggestedWine, setSuggestedWine] = useState<Wine | null>(null);
   const [isAddWineSnackVisible, setIsAddWineSnackVisible] = useState(false)
 
-  // --- SECTION 2: LA LOGIQUE DE SAUVEGARDE ---
+  useEffect(() => {
+    if (isModalVisible) {
+      // Reset animation values
+      slideAnim.setValue(screenHeight);
+      fadeAnim.setValue(0);
+      scaleAnim.setValue(0.9);
+      backdropAnim.setValue(0); // Reset backdrop
+
+
+      // Animate in
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(backdropAnim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isModalVisible]);
+
+    // Animated hide modal function
+  const hideModal = () => {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: screenHeight,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 0.9,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backdropAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setIsModalVisible(false);
+    });
+  };
+
   const handleSave = () => {
     // Validation simple pour s'assurer que les champs principaux ne sont pas vides
     if (!name) {
@@ -97,10 +165,11 @@ export default function AddWineScreen() {
 
       const confirmAddWine = await addWine(suggestedWine);
       if (confirmAddWine) {setIsAddWineSnackVisible(true)}
-      setIsModalVisible(false)
+      hideModal()
       router.navigate("/")
     }
   };
+
 
   // --- SECTION 3: LE RENDU VISUEL (JSX) ---
   return (
@@ -157,10 +226,28 @@ export default function AddWineScreen() {
             >
               <Modal
                 visible={isModalVisible}
-                onDismiss={() => setIsModalVisible(false)}
-                contentContainerStyle={styles.modalContainer}
+                onDismiss={hideModal}
+                contentContainerStyle={styles.transparentModalContainer}
               >
+                <Animated.View 
+                  style={[
+                    styles.animatedBackdrop,
+                    { opacity: backdropAnim }
+                  ]}
+                />
                 {suggestedWine && (
+                  <Animated.View
+                    style={[
+                      styles.animatedModalContent,
+                      {
+                        opacity: fadeAnim,
+                        transform: [
+                          { translateY: slideAnim },
+                          { scale: scaleAnim }
+                        ],
+                      },
+                    ]}
+                  >
                     <ScrollView contentContainerStyle={styles.modalContent}>
 
                       <Card style={styles.infoCard}>
@@ -216,6 +303,7 @@ export default function AddWineScreen() {
                       </Card>
 
                       <Divider style={styles.divider} />
+
                       <Card style={styles.infoCard}>
                         <Card.Content>
                           {suggestedWine.tastingNotes && suggestedWine.tastingNotes.length > 0 && (
@@ -267,13 +355,13 @@ export default function AddWineScreen() {
                         textColor="darkred" 
                         contentStyle={styles.buttonContent}
                         buttonColor='#d9d7d7ff'
-                        
                         labelStyle={styles.modalButtonLabel}
-                        onPress={() => setIsModalVisible(false)}>
+                        onPress={hideModal}>
                           Annuler
                         </Button>
                       </View>
                     </ScrollView>
+                  </Animated.View>
                 )}
               </Modal>
               <Snackbar 
@@ -301,12 +389,32 @@ const styles = StyleSheet.create({
   input: { marginBottom: 15 },
   button: { marginTop: 10, paddingTop: 8, paddingBottom: 8 },
   // Nouveaux styles pour le modal
+  transparentModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'transparent', // Fully transparent
+  },
+  animatedBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent dark overlay
+  },
   modalContainer: {
     backgroundColor: '#d9d7d7ff',
     marginHorizontal: 20,
     borderRadius: 16, // Bords plus arrondis
     maxHeight: '95%',
     overflow: 'hidden'
+  },
+  animatedModalContent: {
+    backgroundColor: '#d9d7d7ff',
+    marginHorizontal: 20,
+    borderRadius: 16,
+    maxHeight: '95%',
+    overflow: 'hidden',
   },
   modalContent: {
     paddingHorizontal: 24,
@@ -332,17 +440,21 @@ const styles = StyleSheet.create({
   detailRow: {
     flexDirection: 'row',
     alignItems: 'baseline', // Aligne les labels et les valeurs
-    marginBottom: 8,
+    marginBottom: 20,
+    borderBottomWidth: 2, // Une fine ligne de séparation pour chaque attribut
+    borderBottomColor: '#eee',
   },
   detailLabel: {
     fontWeight: 'bold',
     marginRight: 8,
     color: '#111',
+    //flex:1
     //fontSize: 16,
   },
   detailValue: {
     fontSize: 16,
     color: '#444',
+    //flex: 2
   },
   tastingNotesContainer: {
     marginTop: 5,
