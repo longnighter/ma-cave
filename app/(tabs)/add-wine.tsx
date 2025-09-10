@@ -3,12 +3,9 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { Card, Button, Chip, Divider, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
+import { Button, Card, Chip, Divider, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
-import { Background } from '@react-navigation/elements';
-import CardComponent from 'react-native-paper/lib/typescript/components/Card/Card';
-import CardContent from 'react-native-paper/lib/typescript/components/Card/CardContent';
 
 export default function AddWineScreen() {
   const router = useRouter();
@@ -235,6 +232,22 @@ export default function AddWineScreen() {
                           )}
                         </Card.Content>
                       </Card>
+                      <Card style={styles.infoCard}>
+                        <Card.Content>
+                          {suggestedWine.winePairing && suggestedWine.winePairing.length > 0 && (
+                            <View style={styles.tastingNotesContainer}>
+                              <Text variant="titleMedium" >Accords Mets & Vins :</Text>
+                              <View style={styles.chipsContainer}>
+                                {suggestedWine.winePairing.map((note, index) => (
+                                  <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
+                                    {note}
+                                  </Chip>
+                                ))}
+                              </View>
+                            </View>
+                          )}
+                        </Card.Content>
+                      </Card>
                       
 
                       <View style={styles.modalButtonContainer} >
@@ -292,8 +305,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#d9d7d7ff',
     marginHorizontal: 20,
     borderRadius: 16, // Bords plus arrondis
-    maxHeight: '85%',
-    overflow: 'hidden',
+    maxHeight: '95%',
+    overflow: 'hidden'
   },
   modalContent: {
     paddingHorizontal: 24,

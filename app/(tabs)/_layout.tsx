@@ -11,6 +11,12 @@ export default function TabLayout() {
           title: `Ma Cave - ${useWines().wines.length} vins`,
         }}
       />
+      <Tabs.Screen
+        name="add-wine"
+        options={{
+          title: `Ajouter un vin`
+        }}
+      />
     </Tabs>
   );
 }
