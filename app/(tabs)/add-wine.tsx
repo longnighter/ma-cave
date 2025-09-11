@@ -264,38 +264,38 @@ export default function AddWineScreen() {
                         <Card.Content>
                           {suggestedWine.appellation && (
                             <View style={styles.detailRow}>
-                              <Text style={styles.detailLabel}>Appellation :</Text>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Appellation</Text>
                               <Text variant="bodyLarge" >{suggestedWine.appellation}</Text>
                             </View>
                           )}
                           {suggestedWine.region && (
                             <View style={styles.detailRow}>
-                              <Text variant="titleMedium" style={styles.detailLabel}>Région :</Text>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Région</Text>
                               <Text variant="bodyLarge">{suggestedWine.region}</Text>
                             </View>
                           )}
                           {suggestedWine.year && (
                             <View style={styles.detailRow}>
-                              <Text variant="titleMedium" style={styles.detailLabel}>Millésime :</Text>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Millésime</Text>
                               <Text variant="bodyLarge">{suggestedWine.year}</Text>
                             </View>
                           )}
                           {suggestedWine.grape && suggestedWine.grape.length > 0 && (
                             <View style={styles.detailRow}>
-                              <Text variant="titleMedium" style={styles.detailLabel}>Cépages :</Text>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Cépage(s)</Text>
                               <Text variant="bodyLarge">{suggestedWine.grape.join(', ')}</Text>
                             </View>
                           )}
                           {suggestedWine.domain && (
                             <View style={styles.detailRow}>
-                              <Text variant="titleMedium" style={styles.detailLabel}>Domaine :</Text>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Domaine</Text>
                               <Text variant="bodyLarge">{suggestedWine.domain}</Text>
                             </View>
                           )}
 
                           {suggestedWine.bestToDrink && suggestedWine.bestToDrink.length === 2 && (
                             <View style={styles.detailRow}>
-                              <Text variant="titleMedium" style={styles.detailLabel}>Apogée :</Text>
+                              <Text variant="titleMedium" style={styles.detailLabel}>Apogée</Text>
                               <Text variant="bodyLarge">{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
                             </View>
                           )}
@@ -434,13 +434,13 @@ const styles = StyleSheet.create({
     verticalAlign:"middle"
   },
   divider: {
-    marginVertical: 16,
+    marginVertical: 10,
     height: 1.5,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'baseline', // Aligne les labels et les valeurs
-    marginBottom: 20,
+    marginBottom: 10,
     borderBottomWidth: 2, // Une fine ligne de séparation pour chaque attribut
     borderBottomColor: '#eee',
   },
@@ -448,6 +448,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 8,
     color: '#111',
+    width: 100
     //flex:1
     //fontSize: 16,
   },
@@ -457,13 +458,14 @@ const styles = StyleSheet.create({
     //flex: 2
   },
   tastingNotesContainer: {
-    marginTop: 5,
+    marginTop: 0,
+    paddingTop:0
     //marginBottom: 10,
     //flexDirection: 'row', // Pour aligner les chips
     //lexWrap: 'wrap',     // Permet aux chips de passer à la ligne
     //alignItems: 'center',
   },
-    chipsContainer: {
+  chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 8,
@@ -511,9 +513,11 @@ const styles = StyleSheet.create({
     paddingRight:30
   },
   infoCard: {
-    marginBottom: 10, // Espace entre les cartes
+    marginBottom: 5, // Espace entre les cartes
     marginTop:5,
     borderRadius: 12,
     elevation: 3, // Ombre légère pour effet de bulle
+    paddingTop:0,
+    paddingBottom:0
   }
 });
