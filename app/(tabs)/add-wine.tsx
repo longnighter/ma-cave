@@ -1,9 +1,9 @@
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, StyleSheet, View } from 'react-native';
+import { Animated, Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { Button, Card, Chip, Divider, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
+import { Button, Card, Chip, Divider, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
 
@@ -222,32 +222,41 @@ export default function AddWineScreen() {
         {(isModalVisible || isAddWineSnackVisible) && (
           <Portal>
             <GestureHandlerRootView 
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+            style={StyleSheet.absoluteFill} pointerEvents="box-none"
             >
-              <Modal
+              <Animated.View style={[styles.animatedBackdrop, { opacity: fadeAnim }]}>
+                {/* On utilise un Pressable pour pouvoir fermer le modal en cliquant sur le fond */}
+                <Pressable style={{ flex: 1 }} onPress={hideModal} />
+              </Animated.View>
+              {/* <Modal
                 visible={isModalVisible}
                 onDismiss={hideModal}
                 contentContainerStyle={styles.transparentModalContainer}
-              >
-                <Animated.View 
+              > */}
+              <View style={styles.modalPositioner} pointerEvents="box-none">
+                <Animated.View
                   style={[
-                    styles.animatedBackdrop,
-                    { opacity: backdropAnim }
+                    styles.modalContainer, // Votre style existant pour le conteneur
+                    {
+                      // On applique les transformations ici
+                      opacity: fadeAnim,
+                      transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
+                    },
                   ]}
-                />
-                {suggestedWine && (
-                  <Animated.View
-                    style={[
-                      styles.animatedModalContent,
-                      {
-                        opacity: fadeAnim,
-                        transform: [
-                          { translateY: slideAnim },
-                          { scale: scaleAnim }
-                        ],
-                      },
-                    ]}
-                  >
+                >
+                  {suggestedWine && (
+                  // <Animated.View
+                  //   style={[
+                  //     styles.animatedModalContent,
+                  //     {
+                  //       opacity: fadeAnim,
+                  //       transform: [
+                  //         { translateY: slideAnim },
+                  //         { scale: scaleAnim }
+                  //       ],
+                  //     },
+                  //   ]}
+                  // >
                     <ScrollView contentContainerStyle={styles.modalContent}>
 
                       <Card style={styles.infoCard}>
@@ -361,9 +370,11 @@ export default function AddWineScreen() {
                         </Button>
                       </View>
                     </ScrollView>
-                  </Animated.View>
+                  //</Animated.View>
                 )}
-              </Modal>
+                {/* </Modal> */}
+                </Animated.View>
+              </View>
               <Snackbar 
                 onDismiss={() => setIsAddWineSnackVisible(false)}
                 duration={3000}
@@ -371,7 +382,7 @@ export default function AddWineScreen() {
                 wrapperStyle={styles.snackBar}
                 style={styles.snackBar}
               >
-                Vin ajouté à la base de donnée
+                Vin ajouté à la base de données
               </Snackbar>
             </GestureHandlerRootView>
           </Portal>
@@ -389,32 +400,26 @@ const styles = StyleSheet.create({
   input: { marginBottom: 15 },
   button: { marginTop: 10, paddingTop: 8, paddingBottom: 8 },
   // Nouveaux styles pour le modal
-  transparentModalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'transparent', // Fully transparent
-  },
   animatedBackdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent dark overlay
+  },
+  modalPositioner:{
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center', // Centre verticalement
+    alignItems: 'center',     // Centre horizontalement
   },
   modalContainer: {
     backgroundColor: '#d9d7d7ff',
-    marginHorizontal: 20,
-    borderRadius: 16, // Bords plus arrondis
-    maxHeight: '95%',
-    overflow: 'hidden'
-  },
-  animatedModalContent: {
-    backgroundColor: '#d9d7d7ff',
-    marginHorizontal: 20,
     borderRadius: 16,
     maxHeight: '95%',
+    width: '90%', // On utilise une largeur en pourcentage pour s'adapter à tous les écrans
     overflow: 'hidden',
+    elevation: 10, // Ombre sur Android
+    shadowColor: '#000', // Ombre sur iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   modalContent: {
     paddingHorizontal: 24,
@@ -449,8 +454,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     color: '#111',
     width: 100
-    //flex:1
-    //fontSize: 16,
   },
   detailValue: {
     fontSize: 16,
@@ -460,10 +463,6 @@ const styles = StyleSheet.create({
   tastingNotesContainer: {
     marginTop: 0,
     paddingTop:0
-    //marginBottom: 10,
-    //flexDirection: 'row', // Pour aligner les chips
-    //lexWrap: 'wrap',     // Permet aux chips de passer à la ligne
-    //alignItems: 'center',
   },
   chipsContainer: {
     flexDirection: 'row',
@@ -502,15 +501,15 @@ const styles = StyleSheet.create({
   },
   modalButtonLabel:{
     fontSize:20
-  },
+  },  
   snackBar:{
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignContent: "center",
     alignItems: "center",
     verticalAlign: "middle",
     top:0,
-    paddingLeft:30,
-    paddingRight:30
+    paddingLeft:0,
+    paddingRight:0
   },
   infoCard: {
     marginBottom: 5, // Espace entre les cartes
