@@ -591,6 +591,10 @@ const styles = StyleSheet.create({
 * **`Invalid JWT` lors du test de la fonction :** Redéployez avec le flag `--no-verify-jwt`.
 * **`supabase start` échoue avec des erreurs Docker :** Vérifier que Docker Desktop est lancé, vérifier l'espace disque, utiliser `docker system prune -a` pour nettoyer.
 
+* ** VS Code conflit tsx / deno: ** éditer le fichier settings.json dans le dossier .vscode du projet. Ajouter 
+  "deno.enablePaths": ["./supabase"]
+
+
 ## Annexe B : Guide du Workflow Git : Fusionner une Branche (Merge)
 
 Ce guide décrit la procédure standard et professionnelle pour intégrer le travail d'une branche de fonctionnalité (par exemple, `feature/gemini-popup`) dans votre branche principale (`main`) une fois que la fonctionnalité est terminée et testée.
