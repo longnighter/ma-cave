@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, FAB, List, Text } from 'react-native-paper';
+import { ActivityIndicator, FAB, List, Text, Card } from 'react-native-paper';
 import { useWines } from '../../context/WineContext';
 
 export default function HomeScreen() {
