@@ -1,7 +1,7 @@
 import { serve } from "serve"
 import { corsHeaders } from "shared/cors.ts"
 
-serve(async (req) => {
+serve(async (req: Request) => {
 
   // Handle CORS for security (required by Supabase)
   if (req.method === 'OPTIONS') {
@@ -10,7 +10,12 @@ serve(async (req) => {
   const { name } = await req.json() // This line reads data from the request
   const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
-
+  if (!GEMINI_API_KEY) {
+    return new Response(JSON.stringify({ error: 'GEMINI_API_KEY is not set' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    })
+  }
   const text = `Donne moi les informations sur ce vin : ${name}.
   Réponds en français. La propriété 'bestTimeToDrink' doit être l'année de départ et de fin de la période d'apogée du vin.
   Essaye de me donner une fourchette assez précise (idéalement 4 ou 5 ans d'écart).
@@ -67,8 +72,8 @@ serve(async (req) => {
     );
   }
   catch (error) {
-    // Handle any errors that occur
-    return new Response(JSON.stringify({ error: error.message }), {
+    const message = error instanceof Error ? error.message : String(error)
+    return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });
