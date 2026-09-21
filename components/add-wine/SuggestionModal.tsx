@@ -39,7 +39,6 @@ export const SuggestionModal = ({
 					{/* On utilise un Pressable pour pouvoir fermer le modal en cliquant sur le fond */}
 					<Pressable style={styles.backdropPressable} onPress={onDismiss} />
 				</Animated.View>
-
 				{/* Contenu du modal */}
 				<View style={styles.modalPositioner} pointerEvents="box-none">
 					<Animated.View

@@ -19,7 +19,6 @@ export default function AddWineScreen() {
   const slideAnim = useRef(new Animated.Value(screenHeight)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
-  const backdropAnim = useRef(new Animated.Value(0)).current; // NEW: For backdrop
 
   const defaultTuple: [number, number] = [0,0];
   const [name, setName] = useState('');
@@ -42,7 +41,6 @@ export default function AddWineScreen() {
       slideAnim.setValue(screenHeight);
       fadeAnim.setValue(0);
       scaleAnim.setValue(0.9);
-      backdropAnim.setValue(0); // Reset backdrop
 
 
       // Animate in
@@ -62,11 +60,6 @@ export default function AddWineScreen() {
           duration: 400,
           useNativeDriver: true,
         }),
-        Animated.timing(backdropAnim, {
-          toValue: 1,
-          duration: 400,
-          useNativeDriver: true,
-        }),
       ]).start();
     }
   }, [isModalVisible]);
@@ -81,16 +74,11 @@ export default function AddWineScreen() {
       }),
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 300,
+        duration: 500,
         useNativeDriver: true,
       }),
       Animated.timing(scaleAnim, {
         toValue: 0.9,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(backdropAnim, {
-        toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }),
