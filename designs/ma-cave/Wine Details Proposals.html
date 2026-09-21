@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ma Cave — Wine Details Proposals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --wine: #6e0909;
+      --wine-soft: rgba(110, 9, 9, 0.28);
+      --ink: #f4ece4;
+      --muted: #d5c4b5;
+      --soft: rgba(255,255,255,0.08);
+      --page: #0d0908;
+      --elevated: #1a1210;
+      --card: #2a1814;
+      --gold: #c9b48c;
+      --border: rgba(201, 180, 140, 0.32);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Outfit, system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #3a1c18 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #4a2018 0%, transparent 50%),
+        linear-gradient(180deg, #1a1210 0%, #0d0908 100%);
+      color: #f4ece4;
+      min-height: 100vh;
+    }
+    .board { max-width: 1180px; margin: 0 auto; padding: 40px 24px 80px; }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--gold); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      margin-bottom: 20px;
+    }
+    header.hero { display: grid; gap: 10px; margin-bottom: 28px; }
+    header.hero .brand {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;
+    }
+    header.hero .brand span { color: var(--gold); }
+    header.hero p { max-width: 44rem; color: #d5c4b5; font-size: 1.02rem; line-height: 1.5; }
+    .assumptions {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 32px;
+      color: #c9b8a8;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      max-width: 46rem;
+    }
+    .assumptions strong { color: var(--ink); font-weight: 600; }
+    .assumptions ul { margin: 8px 0 0 1.1rem; }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 36px;
+      align-items: start;
+    }
+    .shot { display: grid; gap: 14px; justify-items: center; }
+    .shot h2 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.2rem; font-weight: 500; color: #f0e4d8; text-align: center;
+    }
+    .shot .label {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 4px;
+    }
+    .shot p.desc {
+      color: #b9a89a; font-size: 0.88rem; text-align: center;
+      max-width: 280px; line-height: 1.45;
+    }
+
+    .phone {
+      width: 300px; height: 640px; background: #111; border-radius: 38px; padding: 10px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 60px rgba(0,0,0,0.45);
+      position: relative;
+    }
+    .phone::before {
+      content: ""; position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 8px; background: #222; border-radius: 999px; z-index: 2;
+    }
+    .screen {
+      width: 100%; height: 100%; background: var(--page); color: var(--ink);
+      border-radius: 30px; overflow: hidden; display: flex; flex-direction: column;
+    }
+    .status {
+      padding: 18px 14px 10px; border-bottom: 1px solid var(--soft); background: var(--elevated);
+      flex: none;
+    }
+    .status .time-row {
+      display: flex; justify-content: space-between; font-size: 11px; font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .status .title { text-align: center; font-size: 13px; font-weight: 600; }
+    .scroll {
+      flex: 1; overflow: auto; padding: 18px 16px 24px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tabs {
+      display: flex; justify-content: space-around;
+      padding: 12px 18px 18px; border-top: 1px solid var(--soft);
+      background: var(--elevated); font-size: 11px; color: var(--muted); flex: none;
+    }
+    .tabs .on { color: var(--gold); font-weight: 600; }
+
+    /* Shared detail bits */
+    .ico {
+      width: 14px; height: 14px; flex: none;
+      stroke: currentColor; fill: none; stroke-width: 1.6;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .year-badge {
+      display: inline-block;
+      font-size: 11px; font-weight: 700; color: var(--gold);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 2px 7px; letter-spacing: 0.02em;
+    }
+    .section { color: var(--gold); font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .body { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .muted { color: var(--muted); font-size: 13px; }
+    .divider { height: 1px; background: var(--soft); margin: 14px 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: var(--wine-soft); color: var(--muted); font-size: 10px;
+      padding: 5px 9px; border-radius: 999px; font-weight: 500;
+    }
+    .block + .block { margin-top: 16px; }
+
+    /* ——— A: Inline meta ——— */
+    [data-screen-label="A"] .domain-kicker {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--gold); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    [data-screen-label="A"] .wine-title {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 18px; font-weight: 600; line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    [data-screen-label="A"] .wine-title .yb { float: right; margin-top: 2px; }
+    [data-screen-label="A"] .meta-line {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+      color: var(--muted); font-size: 12px; line-height: 1.3;
+    }
+    [data-screen-label="A"] .meta-item {
+      display: inline-flex; align-items: center; gap: 5px; max-width: 100%;
+    }
+    [data-screen-label="A"] .meta-item .ico { color: var(--gold); }
+    [data-screen-label="A"] .meta-sep {
+      width: 3px; height: 3px; border-radius: 50%; background: rgba(196,165,116,0.55);
+      flex: none;
+    }
+
+    /* ——— B: Soft chips ——— */
+    [data-screen-label="B"] .wine-title {
+      font-size: 17px; font-weight: 700; line-height: 1.3; margin-bottom: 6px;
+    }
+    [data-screen-label="B"] .title-row {
+      display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px;
+    }
+    [data-screen-label="B"] .title-row h3 { flex: 1; font-size: 17px; font-weight: 700; line-height: 1.3; }
+    [data-screen-label="B"] .domain-row {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--muted); font-size: 12px; margin-bottom: 12px;
+    }
+    [data-screen-label="B"] .domain-row .ico { color: var(--gold); }
+    [data-screen-label="B"] .domain-row strong { color: var(--ink); font-weight: 600; }
+    [data-screen-label="B"] .meta-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    [data-screen-label="B"] .meta-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--card); border: 1px solid var(--soft);
+      border-radius: 999px; padding: 6px 10px;
+      font-size: 11px; color: var(--ink); font-weight: 500;
+    }
+    [data-screen-label="B"] .meta-chip .ico { color: var(--gold); width: 13px; height: 13px; }
+
+    /* ——— C: Identity card ——— */
+    [data-screen-label="C"] .id-card {
+      background: linear-gradient(160deg, #2f1c18 0%, #1a1210 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 14px 12px;
+      margin-bottom: 4px;
+    }
+    [data-screen-label="C"] .id-domain {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: var(--gold);
+      margin-bottom: 8px;
+    }
+    [data-screen-label="C"] .id-domain .ico { width: 13px; height: 13px; }
+    [data-screen-label="C"] .id-title {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 17px; font-weight: 600; line-height: 1.25;
+      margin-bottom: 4px;
+    }
+    [data-screen-label="C"] .id-app {
+      font-size: 11px; color: var(--muted); margin-bottom: 12px;
+    }
+    [data-screen-label="C"] .id-meta {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      padding-top: 10px; border-top: 1px solid var(--soft);
+    }
+    [data-screen-label="C"] .id-meta .cell {
+      display: flex; align-items: flex-start; gap: 6px;
+      min-width: 0;
+    }
+    [data-screen-label="C"] .id-meta .ico {
+      color: var(--gold); margin-top: 1px; width: 13px; height: 13px;
+    }
+    [data-screen-label="C"] .id-meta .lbl {
+      display: block; font-size: 9px; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted); margin-bottom: 2px;
+    }
+    [data-screen-label="C"] .id-meta .val {
+      font-size: 11px; color: var(--ink); font-weight: 500; line-height: 1.3;
+      word-break: break-word;
+    }
+    [data-screen-label="C"] .id-year {
+      margin-top: 10px;
+      display: flex; justify-content: flex-end;
+    }
+
+    /* ——— D: A+C hybrid, flat translucent ——— */
+    .shot.featured {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: 100%;
+      max-width: 340px;
+    }
+    .shot.featured .label { color: #c9b48c; }
+    [data-screen-label="D"] {
+      /* Softened sibling of A/B/C gold #c4a574 */
+      --accent: #c9b48c;
+      --accent-soft: rgba(201, 180, 140, 0.26);
+      --accent-border: rgba(201, 180, 140, 0.38);
+    }
+    [data-screen-label="D"] .id-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 14px 14px 12px;
+      box-shadow: none;
+    }
+    [data-screen-label="D"] .id-domain {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: var(--accent);
+      letter-spacing: 0.03em;
+      margin-bottom: 8px;
+    }
+    [data-screen-label="D"] .id-domain .ico { width: 13px; height: 13px; color: var(--accent); }
+    [data-screen-label="D"] .id-head {
+      display: flex; align-items: flex-start; gap: 8px;
+      margin-bottom: 10px;
+    }
+    [data-screen-label="D"] .id-title {
+      flex: 1;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 17px; font-weight: 600; line-height: 1.25;
+      color: var(--ink);
+    }
+    [data-screen-label="D"] .year-badge {
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+    [data-screen-label="D"] .meta-line {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+      color: var(--muted); font-size: 12px; line-height: 1.3;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    [data-screen-label="D"] .meta-item {
+      display: inline-flex; align-items: center; gap: 5px; max-width: 100%;
+    }
+    [data-screen-label="D"] .meta-item .ico { color: var(--accent); }
+    [data-screen-label="D"] .meta-sep {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(201, 180, 140, 0.6); flex: none;
+    }
+    [data-screen-label="D"] .section {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    [data-screen-label="D"] .body {
+      color: var(--muted);
+    }
+    [data-screen-label="D"] .chip {
+      color: var(--muted);
+      background: var(--wine-soft);
+    }
+
+    footer.note {
+      margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);
+      color: #b9a89a; font-size: 0.9rem; line-height: 1.5; max-width: 46rem;
+    }
+    footer.note a { color: var(--gold); }
+    footer.note code {
+      background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 6px; font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <a class="back" href="index.html">← Design board</a>
+    <header class="hero">
+      <div class="brand">Détail vin — <span>propositions</span></div>
+      <p>Option D = mix A + C, flat, carte translucide. Les options A–C restent en référence en dessous.</p>
+    </header>
+
+    <div class="assumptions">
+      <strong>Contexte &amp; hypothèses</strong>
+      <ul>
+        <li>Données dispo : <code>domain</code>, <code>region</code>, <code>grape[]</code>, <code>appellation</code>, apogée, notes, accords.</li>
+        <li>L’écran actuel empile région / cépages en texte muted — on densifie le header sans alourdir.</li>
+        <li>Icônes SVG (pas d’emoji) pour pin / raisin / domaine.</li>
+        <li>Exemple : Château Pavillon Beauregard, Lalande de Pomerol 2016.</li>
+      </ul>
+    </div>
+
+    <div class="gallery">
+      <!-- ========== D: hybrid ========== -->
+      <article class="shot featured" data-screen-label="D">
+        <div>
+          <div class="label">Option D · préférée</div>
+          <h2>Flat translucent</h2>
+        </div>
+        <div class="phone"><div class="screen" data-screen-label="D">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Détail</div>
+          </div>
+          <div class="scroll">
+            <div class="id-card">
+              <div class="id-domain">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+                Château Pavillon Beauregard
+              </div>
+              <div class="id-head">
+                <div class="id-title">Lalande de Pomerol</div>
+                <span class="year-badge">2016</span>
+              </div>
+              <div class="meta-line">
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                  Bordeaux
+                </span>
+                <span class="meta-sep" aria-hidden="true"></span>
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="8" rx="3.2" ry="4"/><ellipse cx="7.5" cy="13" rx="2.8" ry="3.5"/><ellipse cx="16.5" cy="13" rx="2.8" ry="3.5"/><path d="M12 12v9"/></svg>
+                  Merlot, Cabernet Franc
+                </span>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="block">
+              <div class="section">Apogée</div>
+              <div class="body">Entre 2020 et 2025</div>
+            </div>
+            <div class="block">
+              <div class="section">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Fruits rouges mûrs</span>
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+                <span class="chip">Épices douces</span>
+              </div>
+            </div>
+            <div class="block">
+              <div class="section">Accords mets &amp; vins</div>
+              <div class="chips">
+                <span class="chip">Agneau rôti</span>
+                <span class="chip">Gibier</span>
+                <span class="chip">Fromages affinés</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Carte plate translucide (pas de gradient). Domaine en haut (C) + région/cépages en ligne avec icônes (A).</p>
+      </article>
+
+      <!-- ========== A ========== -->
+      <article class="shot" data-screen-label="A">
+        <div>
+          <div class="label">Option A</div>
+          <h2>Inline meta</h2>
+        </div>
+        <div class="phone"><div class="screen" data-screen-label="A">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Détail</div>
+          </div>
+          <div class="scroll">
+            <div class="domain-kicker">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+              Château Pavillon Beauregard
+            </div>
+            <div class="wine-title">
+              <span class="year-badge yb">2016</span>
+              Lalande de Pomerol
+            </div>
+            <div class="meta-line">
+              <span class="meta-item">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                Bordeaux
+              </span>
+              <span class="meta-sep" aria-hidden="true"></span>
+              <span class="meta-item">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="8" rx="3.2" ry="4"/><ellipse cx="7.5" cy="13" rx="2.8" ry="3.5"/><ellipse cx="16.5" cy="13" rx="2.8" ry="3.5"/><path d="M12 12v9"/></svg>
+                Merlot, Cabernet Franc
+              </span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="block">
+              <div class="section">Apogée</div>
+              <div class="body">Entre 2020 et 2025</div>
+            </div>
+            <div class="block">
+              <div class="section">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Fruits rouges mûrs</span>
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+                <span class="chip">Épices douces</span>
+              </div>
+            </div>
+            <div class="block">
+              <div class="section">Accords mets &amp; vins</div>
+              <div class="chips">
+                <span class="chip">Agneau rôti</span>
+                <span class="chip">Gibier</span>
+                <span class="chip">Fromages affinés</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Domaine en kicker gold au-dessus du nom. Région + cépages sur une seule ligne, séparés par un point, avec icônes.</p>
+      </article>
+
+      <!-- ========== B ========== -->
+      <article class="shot" data-screen-label="B">
+        <div>
+          <div class="label">Option B</div>
+          <h2>Soft chips</h2>
+        </div>
+        <div class="phone"><div class="screen" data-screen-label="B">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Détail</div>
+          </div>
+          <div class="scroll">
+            <div class="title-row">
+              <h3>Château Pavillon Beauregard Lalande de Pomerol</h3>
+              <span class="year-badge">2016</span>
+            </div>
+            <div class="domain-row">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+              Domaine <strong>Château Pavillon Beauregard</strong>
+            </div>
+            <div class="meta-chips">
+              <span class="meta-chip">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                Bordeaux
+              </span>
+              <span class="meta-chip">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="8" rx="3.2" ry="4"/><ellipse cx="7.5" cy="13" rx="2.8" ry="3.5"/><ellipse cx="16.5" cy="13" rx="2.8" ry="3.5"/><path d="M12 12v9"/></svg>
+                Merlot, Cab. Franc
+              </span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="block">
+              <div class="section">Apogée</div>
+              <div class="body">Entre 2020 et 2025</div>
+            </div>
+            <div class="block">
+              <div class="section">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Fruits rouges mûrs</span>
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+                <span class="chip">Épices douces</span>
+              </div>
+            </div>
+            <div class="block">
+              <div class="section">Accords mets &amp; vins</div>
+              <div class="chips">
+                <span class="chip">Agneau rôti</span>
+                <span class="chip">Gibier</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Nom complet + badge millésime. Domaine juste en dessous. Région / cépages en pastilles tapables (même ligne).</p>
+      </article>
+
+      <!-- ========== C ========== -->
+      <article class="shot" data-screen-label="C">
+        <div>
+          <div class="label">Option C</div>
+          <h2>Identity card</h2>
+        </div>
+        <div class="phone"><div class="screen" data-screen-label="C">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Détail</div>
+          </div>
+          <div class="scroll">
+            <div class="id-card">
+              <div class="id-domain">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+                Château Pavillon Beauregard
+              </div>
+              <div class="id-title">Lalande de Pomerol</div>
+              <div class="id-app">Appellation Lalande de Pomerol</div>
+              <div class="id-meta">
+                <div class="cell">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                  <div>
+                    <span class="lbl">Région</span>
+                    <span class="val">Bordeaux</span>
+                  </div>
+                </div>
+                <div class="cell">
+                  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="8" rx="3.2" ry="4"/><ellipse cx="7.5" cy="13" rx="2.8" ry="3.5"/><ellipse cx="16.5" cy="13" rx="2.8" ry="3.5"/><path d="M12 12v9"/></svg>
+                  <div>
+                    <span class="lbl">Cépages</span>
+                    <span class="val">Merlot, Cabernet Franc</span>
+                  </div>
+                </div>
+              </div>
+              <div class="id-year"><span class="year-badge">2016</span></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="block">
+              <div class="section">Apogée</div>
+              <div class="body">Entre 2020 et 2025</div>
+            </div>
+            <div class="block">
+              <div class="section">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Fruits rouges mûrs</span>
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+                <span class="chip">Épices douces</span>
+              </div>
+            </div>
+            <div class="block">
+              <div class="section">Accords mets &amp; vins</div>
+              <div class="chips">
+                <span class="chip">Agneau rôti</span>
+                <span class="chip">Gibier</span>
+                <span class="chip">Fromages affinés</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Carte d’identité en haut : Domaine dominant, puis appellation. Région + cépages en grille 2 colonnes avec labels.</p>
+      </article>
+    </div>
+
+    <footer class="note">
+      Fichier : <code>designs/ma-cave/Wine Details Proposals.html</code> ·
+      board actuel : <a href="index.html">index.html</a>.
+      Option D en haut — dis-moi si on la porte dans <code>[wineId].tsx</code>, ou si la transparence / flat doit encore bouger.
+    </footer>
+  </div>
+</body>
+</html>

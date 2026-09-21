@@ -14,7 +14,7 @@ serve(async (req) => {
   const text = `Donne moi les informations sur ce vin : ${name}.
   Réponds en français. La propriété 'bestTimeToDrink' doit être l'année de départ et de fin de la période d'apogée du vin.
   Essaye de me donner une fourchette assez précise (idéalement 4 ou 5 ans d'écart).
-  'name' doit être le nom complet du vin. 'domain' doit être le domaine.`
+  'name' doit être le nom complet du vin, sans le millésime. 'domain' doit être le domaine.`
   const requestData = {
         "contents": [
             {

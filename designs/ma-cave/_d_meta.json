@@ -1,0 +1,27 @@
+{
+  "type": "design",
+  "designSystems": [],
+  "primaryDesignSystem": null,
+  "assets": {
+    "Design board": {
+      "versions": [
+        {
+          "path": "index.html",
+          "createdAt": "2026-09-21T16:50:36.843Z",
+          "status": "needs-review"
+        }
+      ]
+    },
+    "Wine Details Proposals": {
+      "versions": [
+        {
+          "path": "Wine Details Proposals.html",
+          "createdAt": "2026-09-21T16:50:36.895Z",
+          "status": "needs-review"
+        }
+      ]
+    }
+  },
+  "createdAt": "2026-09-21T16:50:36.843Z",
+  "updatedAt": "2026-09-21T16:58:23.520Z"
+}

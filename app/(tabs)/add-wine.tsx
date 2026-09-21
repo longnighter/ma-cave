@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   sectionLabel: {
-    color: colors.ink,
+    color: colors.accent,
     fontWeight: '600',
   },
   tastingNotesContainer: {
@@ -492,11 +492,11 @@ const styles = StyleSheet.create({
   chip: {
     marginRight: 6,
     marginBottom: 6,
-    backgroundColor: colors.wineSoft,
+    backgroundColor: colors.labelBg,
   },
   chipText: {
     fontSize: 13,
-    color: colors.gold,
+    color: colors.labelText,
   },
   modalButtonContainer: {
     flexDirection: 'row',

@@ -11,6 +11,14 @@ interface WineContextType {
 
 const WineContext = createContext<WineContextType | undefined>(undefined);
 
+/** Map a Supabase wines row (snake_case) to the app Wine shape (camelCase). */
+const formatWine = (row: any): Wine => ({
+  ...row,
+  bestToDrink: [row.drink_from, row.drink_to],
+  tastingNotes: row.tasting_notes,
+  winePairing: row.wine_pairing,
+});
+
 export const WineProvider = ({ children }: { children: ReactNode }) => {
   const [wines, setWines] = useState<Wine[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,13 +34,7 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
       if (error) {
         console.error("Erreur lors de la récupération des vins", error);
       } else if (data) {
-        // Transformation des données de la BDD vers notre interface
-        const formattedWines = data.map(wine => ({
-          ...wine,
-          bestToDrink: [wine.drink_from, wine.drink_to],
-          tastingNotes: wine.tasting_notes,
-        }));
-        setWines(formattedWines);
+        setWines(data.map(formatWine));
       }
       setLoading(false);
     };
@@ -63,11 +65,7 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
       return false
     }
     else if (data) {
-      const newWineFormatted = {
-        ...data
-
-      };
-      setWines(currentWines => [newWineFormatted, ...currentWines]);
+      setWines((currentWines) => [formatWine(data), ...currentWines]);
       return true
     }
     return false
