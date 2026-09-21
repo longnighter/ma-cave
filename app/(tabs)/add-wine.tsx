@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { Button, Card, Chip, Divider, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
+import { colors } from '../../constants/theme';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
 
@@ -200,20 +201,23 @@ export default function AddWineScreen() {
             style={styles.input}
           />
           */}
-          <Button 
-            mode="contained" 
-            onPress={handleSave} 
+          <Button
+            mode="contained"
+            onPress={handleSave}
             style={styles.button}
+            buttonColor={colors.wine}
+            textColor="#ffffff"
           >
             Ajouter à la cave
           </Button>
 
-          <Button 
-            mode="text" 
+          <Button
+            mode="text"
             onPress={handleGenerateInfo}
             loading={isGenerating}
             disabled={isGenerating}
             style={styles.button}
+            textColor={colors.gold}
           >
             Générer les infos avec Gemini
           </Button>
@@ -274,38 +278,38 @@ export default function AddWineScreen() {
                           {suggestedWine.appellation && (
                             <View style={styles.detailRow}>
                               <Text variant="titleMedium" style={styles.detailLabel}>Appellation</Text>
-                              <Text variant="bodyLarge" >{suggestedWine.appellation}</Text>
+                              <Text variant="bodyLarge" style={styles.detailValue}>{suggestedWine.appellation}</Text>
                             </View>
                           )}
                           {suggestedWine.region && (
                             <View style={styles.detailRow}>
                               <Text variant="titleMedium" style={styles.detailLabel}>Région</Text>
-                              <Text variant="bodyLarge">{suggestedWine.region}</Text>
+                              <Text variant="bodyLarge" style={styles.detailValue}>{suggestedWine.region}</Text>
                             </View>
                           )}
                           {suggestedWine.year && (
                             <View style={styles.detailRow}>
                               <Text variant="titleMedium" style={styles.detailLabel}>Millésime</Text>
-                              <Text variant="bodyLarge">{suggestedWine.year}</Text>
+                              <Text variant="bodyLarge" style={styles.detailValue}>{suggestedWine.year}</Text>
                             </View>
                           )}
                           {suggestedWine.grape && suggestedWine.grape.length > 0 && (
                             <View style={styles.detailRow}>
                               <Text variant="titleMedium" style={styles.detailLabel}>Cépage(s)</Text>
-                              <Text variant="bodyLarge">{suggestedWine.grape.join(', ')}</Text>
+                              <Text variant="bodyLarge" style={styles.detailValue}>{suggestedWine.grape.join(', ')}</Text>
                             </View>
                           )}
                           {suggestedWine.domain && (
                             <View style={styles.detailRow}>
                               <Text variant="titleMedium" style={styles.detailLabel}>Domaine</Text>
-                              <Text variant="bodyLarge">{suggestedWine.domain}</Text>
+                              <Text variant="bodyLarge" style={styles.detailValue}>{suggestedWine.domain}</Text>
                             </View>
                           )}
 
                           {suggestedWine.bestToDrink && suggestedWine.bestToDrink.length === 2 && (
                             <View style={styles.detailRow}>
                               <Text variant="titleMedium" style={styles.detailLabel}>Apogée</Text>
-                              <Text variant="bodyLarge">{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
+                              <Text variant="bodyLarge" style={styles.detailValue}>{suggestedWine.bestToDrink[0]} - {suggestedWine.bestToDrink[1]}</Text>
                             </View>
                           )}
                         </Card.Content>
@@ -317,7 +321,7 @@ export default function AddWineScreen() {
                         <Card.Content>
                           {suggestedWine.tastingNotes && suggestedWine.tastingNotes.length > 0 && (
                             <View style={styles.tastingNotesContainer}>
-                              <Text variant="titleMedium" >Notes de dégustation :</Text>
+                              <Text variant="titleMedium" style={styles.sectionLabel}>Notes de dégustation :</Text>
                               <View style={styles.chipsContainer}>
                                 {suggestedWine.tastingNotes.map((note, index) => (
                                   <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
@@ -333,7 +337,7 @@ export default function AddWineScreen() {
                         <Card.Content>
                           {suggestedWine.winePairing && suggestedWine.winePairing.length > 0 && (
                             <View style={styles.tastingNotesContainer}>
-                              <Text variant="titleMedium" >Accords Mets & Vins :</Text>
+                              <Text variant="titleMedium" style={styles.sectionLabel}>Accords Mets & Vins :</Text>
                               <View style={styles.chipsContainer}>
                                 {suggestedWine.winePairing.map((note, index) => (
                                   <Chip key={index} style={styles.chip} textStyle={styles.chipText}>
@@ -348,24 +352,26 @@ export default function AddWineScreen() {
                       
 
                       <View style={styles.modalButtonContainer} >
-                        <Button 
-                        style={[styles.modalButton]}
-                        mode="contained"
-                        contentStyle={styles.buttonContent}
-                        buttonColor='#6e0909ff'
-                        textColor='white'
-                        labelStyle={styles.modalButtonLabel}
-                        onPress={handleUseSuggestion} >
-                          Utiliser ces infos
+                        <Button
+                          style={[styles.modalButton]}
+                          mode="contained"
+                          contentStyle={styles.buttonContent}
+                          buttonColor={colors.wine}
+                          textColor="#ffffff"
+                          labelStyle={styles.modalButtonLabel}
+                          onPress={handleUseSuggestion}
+                        >
+                          Utiliser
                         </Button>
-                        <Button 
-                        mode="outlined"
-                        style={[styles.modalButton, styles.annulerModalButton]} 
-                        textColor="darkred" 
-                        contentStyle={styles.buttonContent}
-                        buttonColor='#d9d7d7ff'
-                        labelStyle={styles.modalButtonLabel}
-                        onPress={hideModal}>
+                        <Button
+                          mode="outlined"
+                          style={[styles.modalButton, styles.annulerModalButton]}
+                          textColor={colors.gold}
+                          contentStyle={styles.buttonContent}
+                          buttonColor={colors.modalBg}
+                          labelStyle={styles.modalButtonLabel}
+                          onPress={hideModal}
+                        >
                           Annuler
                         </Button>
                       </View>
@@ -392,77 +398,91 @@ export default function AddWineScreen() {
   );
 }
 
-// --- SECTION 4: LES STYLES ---
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { marginBottom: 10, textAlign: 'center' },
-  iaButton: { alignSelf: 'center', marginBottom: 20 },
-  input: { marginBottom: 15 },
-  button: { marginTop: 10, paddingTop: 8, paddingBottom: 8 },
-  // Nouveaux styles pour le modal
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: colors.page,
+  },
+  title: {
+    marginBottom: 16,
+    textAlign: 'center',
+    color: colors.ink,
+    fontWeight: '600',
+  },
+  input: {
+    marginBottom: 15,
+    backgroundColor: colors.card,
+  },
+  button: {
+    marginTop: 10,
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
   animatedBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent dark overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
   },
-  modalPositioner:{
+  modalPositioner: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center', // Centre verticalement
-    alignItems: 'center',     // Centre horizontalement
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: '#d9d7d7ff',
+    backgroundColor: colors.modalBg,
     borderRadius: 16,
     maxHeight: '95%',
-    width: '90%', // On utilise une largeur en pourcentage pour s'adapter à tous les écrans
+    width: '90%',
     overflow: 'hidden',
-    elevation: 10, // Ombre sur Android
-    shadowColor: '#000', // Ombre sur iOS
+    borderWidth: 1,
+    borderColor: colors.border,
+    elevation: 10,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
   },
   modalContent: {
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-  },
-  modalTitle: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#333',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   modalSubTitle: {
     textAlign: 'center',
-    color: '#555',
-    marginBottom: 10,
-    marginTop: 10,
-    fontWeight: "bold",
-    verticalAlign:"middle"
+    color: colors.gold,
+    marginBottom: 4,
+    marginTop: 4,
+    fontWeight: '700',
   },
   divider: {
-    marginVertical: 10,
-    height: 1.5,
+    marginVertical: 8,
+    height: 1,
+    backgroundColor: colors.soft,
   },
   detailRow: {
     flexDirection: 'row',
-    alignItems: 'baseline', // Aligne les labels et les valeurs
-    marginBottom: 10,
-    borderBottomWidth: 2, // Une fine ligne de séparation pour chaque attribut
-    borderBottomColor: '#eee',
+    alignItems: 'baseline',
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.soft,
+    paddingBottom: 6,
   },
   detailLabel: {
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginRight: 8,
-    color: '#111',
-    width: 100
+    color: colors.ink,
+    width: 100,
   },
   detailValue: {
-    fontSize: 16,
-    color: '#444',
-    //flex: 2
+    flex: 1,
+    color: colors.muted,
+  },
+  sectionLabel: {
+    color: colors.ink,
+    fontWeight: '600',
   },
   tastingNotesContainer: {
     marginTop: 0,
-    paddingTop:0
+    paddingTop: 0,
   },
   chipsContainer: {
     flexDirection: 'row',
@@ -472,51 +492,48 @@ const styles = StyleSheet.create({
   chip: {
     marginRight: 6,
     marginBottom: 6,
-    backgroundColor: '#6e09092a', // Couleur de fond du chip
+    backgroundColor: colors.wineSoft,
   },
   chipText: {
     fontSize: 13,
+    color: colors.gold,
   },
   modalButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around", // Distribue l'espace entre les boutons
-    marginTop: 15,
-    paddingTop: 20,
-    borderTopWidth: 1, // Une petite bordure pour séparer les boutons du contenu
-    borderTopColor: '#eee',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 12,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.soft,
   },
-  modalButton:{
-    borderRadius:15,
-    flex:1,
-    marginHorizontal: 10,
-    padding:0
+  modalButton: {
+    borderRadius: 15,
+    flex: 1,
+    marginHorizontal: 6,
+    padding: 0,
   },
   annulerModalButton: {
-    marginHorizontal: 5,
-    borderColor: '#6e0909ff',
-    borderWidth: 2.5,
+    borderColor: colors.wine,
+    borderWidth: 2,
   },
-  buttonContent:{
-    paddingVertical: 5
+  buttonContent: {
+    paddingVertical: 4,
   },
-  modalButtonLabel:{
-    fontSize:20
-  },  
-  snackBar:{
-    justifyContent: "flex-end",
-    alignContent: "center",
-    alignItems: "center",
-    verticalAlign: "middle",
-    top:0,
-    paddingLeft:0,
-    paddingRight:0
+  modalButtonLabel: {
+    fontSize: 16,
+  },
+  snackBar: {
+    justifyContent: 'flex-end',
+    alignContent: 'center',
+    alignItems: 'center',
+    top: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   infoCard: {
-    marginBottom: 5, // Espace entre les cartes
-    marginTop:5,
+    marginBottom: 6,
+    marginTop: 4,
     borderRadius: 12,
-    elevation: 3, // Ombre légère pour effet de bulle
-    paddingTop:0,
-    paddingBottom:0
-  }
+    backgroundColor: colors.card,
+  },
 });

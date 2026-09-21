@@ -4,7 +4,8 @@ import { Wine } from '../models/Wine';
 
 interface WineContextType {
   wines: Wine[];
-  addWine: (wine: Omit<Wine,"id">) => Promise<boolean>; // La fonction est maintenant asynchrone
+  addWine: (wine: Omit<Wine, "id">) => Promise<boolean>; // La fonction est maintenant asynchrone
+  deleteWines: (ids: string[]) => Promise<boolean>;
   loading: boolean;
 }
 
@@ -42,7 +43,7 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
   const addWine = async (wineToAdd: Omit< Wine, "id">) => {
     const { data, error } = await supabase
       .from('wines')
-      .insert({ 
+      .insert({
         name: wineToAdd.name,
         year: wineToAdd.year,
         region: wineToAdd.region,
@@ -60,7 +61,7 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
     if (error) {
       console.error("Erreur lors de l'ajout du vin", error);
       return false
-    } 
+    }
     else if (data) {
       const newWineFormatted = {
         ...data
@@ -71,9 +72,25 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
     }
     return false
   };
+  const deleteWines = async (ids: string[]) => {
+    if (ids.length === 0) return false;
+
+    const { error } = await supabase
+      .from('wines')
+      .delete()
+      .in('id', ids);
+
+    if (error) {
+      console.error("Erreur lors de la suppression", error);
+      return false;
+    }
+
+    setWines((current) => current.filter((w) => !ids.includes(w.id)));
+    return true;
+  }
 
   return (
-    <WineContext.Provider value={{ wines, addWine, loading }}>
+    <WineContext.Provider value={{ wines, addWine, loading, deleteWines }}>
       {children}
     </WineContext.Provider>
   );

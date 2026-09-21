@@ -11,15 +11,15 @@ serve(async (req) => {
   const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
 
-  const text = `Donne moi les informations sur ce vin : ${name}. 
-  Réponds en français. La propriété 'bestTimeToDrink' doit être l'année de départ et de fin de la période d'apogée du vin. 
+  const text = `Donne moi les informations sur ce vin : ${name}.
+  Réponds en français. La propriété 'bestTimeToDrink' doit être l'année de départ et de fin de la période d'apogée du vin.
   Essaye de me donner une fourchette assez précise (idéalement 4 ou 5 ans d'écart).
   'name' doit être le nom complet du vin. 'domain' doit être le domaine.`
   const requestData = {
         "contents": [
             {
                 "parts":[
-                    { 
+                    {
                         "text": text
                     }
                 ]
@@ -43,35 +43,24 @@ serve(async (req) => {
             }
         }
     }
-  // try {
-  //   // 4. Make the REQUEST to the Gemini API
-  //   const geminiResponse = await fetch(`${GEMINI_API_URL}`, {
-  //     method: 'POST',
-  //     headers: { 
-  //       'Content-Type': 'application/json',
-  //       "X-goog-api-key": GEMINI_API_KEY
-  //     },
-  //     //body: JSON.stringify(requestData),
-  //     body: JSON.stringify(requestData)
-  //   });
-
-  //   if (!geminiResponse.ok) {
-  //     throw new Error(`Gemini API responded with status ${geminiResponse.status}`);
-  //   }
-    
-  //   const geminiData = await geminiResponse.json();
-  //   const jsonText = geminiData.candidates[0].content.parts[0].text;
-  //   const wineInfo = JSON.parse(jsonText);
-
-  //   // 5. Send the RESPONSE from Gemini back to our mobile app
-  //   return new Response(
-  //     JSON.stringify(wineInfo),
-  //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-  //   );
-
-  // } 
   try {
-    const wineInfo = {"appellation": "Lalande de Pomerol", "winePairing": ["Fromage"], "bestToDrink": [2020, 2025], "domain": "Château Pavillon Beauregard", "grape": ["Merlot", "Cabernet Franc"], "name": "Château Pavillon Beauregard Lalande de Pomerol 2016", "region": "Bordeaux", "tastingNotes": ["Fruits rouges mûrs", "Cassis", "Notes de sous-bois", "Épices douces", "Tannins soyeux", "Belle persistance"], "year": 2016}
+    const geminiResponse = await fetch(`${GEMINI_API_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "X-goog-api-key": GEMINI_API_KEY
+      },
+      body: JSON.stringify(requestData)
+    });
+
+    if (!geminiResponse.ok) {
+      throw new Error(`Gemini API responded with status ${geminiResponse.status}`);
+    }
+
+    const geminiData = await geminiResponse.json();
+    const jsonText = geminiData.candidates[0].content.parts[0].text;
+    const wineInfo = JSON.parse(jsonText);
+
     return new Response(
       JSON.stringify(wineInfo),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },

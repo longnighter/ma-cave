@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ma Cave — Design board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --wine: #6e0909;
+      --wine-soft: rgba(110, 9, 9, 0.28);
+      --ink: #f4ece4;
+      --muted: #d5c4b5;
+      --soft: rgba(255,255,255,0.08);
+      --page: #0d0908;
+      --elevated: #1a1210;
+      --card: #2a1814;
+      --gold: #c4a574;
+      --modal-bg: #241816;
+      --border: rgba(196, 165, 116, 0.28);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Outfit, system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #3a1c18 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #4a2018 0%, transparent 50%),
+        linear-gradient(180deg, #1a1210 0%, #0d0908 100%);
+      color: #f4ece4;
+      min-height: 100vh;
+    }
+    .board { max-width: 1280px; margin: 0 auto; padding: 40px 24px 80px; }
+    header.hero { display: grid; gap: 12px; margin-bottom: 36px; }
+    header.hero .brand {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    header.hero .brand span { color: var(--gold); }
+    header.hero p { max-width: 42rem; color: #d5c4b5; font-size: 1.05rem; line-height: 1.5; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+    .pill {
+      border: 1px solid rgba(196, 165, 116, 0.35);
+      color: #e8d7c4;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+    .tokens {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin: 28px 0 40px;
+    }
+    .token {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .swatch {
+      height: 40px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .token small { color: #b9a89a; display: block; margin-top: 2px; font-size: 0.75rem; }
+    .nav {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;
+      position: sticky; top: 12px; z-index: 5;
+      background: rgba(13, 9, 8, 0.72); backdrop-filter: blur(10px);
+      padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav button {
+      appearance: none; border: 0; background: transparent; color: #d5c4b5;
+      font: inherit; font-weight: 500; padding: 10px 14px; border-radius: 10px; cursor: pointer;
+    }
+    .nav button[aria-selected="true"] { background: var(--wine); color: #fff; }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px; align-items: start;
+    }
+    .shot { display: grid; gap: 12px; justify-items: center; }
+    .shot h2 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.15rem; font-weight: 500; color: #f0e4d8; text-align: center;
+    }
+    .shot p { color: #b9a89a; font-size: 0.85rem; text-align: center; max-width: 260px; line-height: 1.4; }
+
+    .phone {
+      width: 280px; height: 606px; background: #111; border-radius: 36px; padding: 10px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 60px rgba(0,0,0,0.45);
+      position: relative;
+    }
+    .phone::before {
+      content: ""; position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 8px; background: #222; border-radius: 999px; z-index: 2;
+    }
+    .screen {
+      width: 100%; height: 100%; background: var(--page); color: var(--ink);
+      border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; position: relative;
+    }
+    .status {
+      padding: 18px 14px 10px; border-bottom: 1px solid var(--soft); background: var(--elevated);
+    }
+    .status .time-row {
+      display: flex; justify-content: space-between; font-size: 11px; font-weight: 600;
+      margin-bottom: 8px; color: var(--ink);
+    }
+    .status .title { text-align: center; font-size: 13px; font-weight: 600; color: var(--ink); }
+    .content { flex: 1; overflow: hidden; position: relative; }
+    .tabs {
+      display: flex; justify-content: space-around;
+      padding: 12px 18px 18px; border-top: 1px solid var(--soft);
+      background: var(--elevated); font-size: 11px; color: var(--muted);
+    }
+    .tabs .on { color: var(--gold); font-weight: 600; }
+    .row {
+      display: flex; gap: 10px; align-items: center;
+      padding: 12px 14px; border-bottom: 1px solid var(--soft);
+    }
+    .icon { width: 28px; height: 28px; border-radius: 50%; background: var(--wine-soft); flex: none; }
+    .row strong { display: block; font-size: 12px; font-weight: 600; line-height: 1.25; color: var(--ink); }
+    .row span { font-size: 11px; color: var(--muted); }
+    .fab {
+      position: absolute; right: 14px; bottom: 14px; width: 44px; height: 44px; border-radius: 50%;
+      background: var(--wine); color: #fff; display: grid; place-items: center;
+      font-size: 24px; font-weight: 700; box-shadow: 0 8px 18px rgba(110, 9, 9, 0.45);
+    }
+    .empty {
+      height: 100%; display: grid; place-items: center; padding: 24px;
+      text-align: center; font-size: 16px; font-weight: 600; color: var(--ink);
+    }
+    .form { padding: 18px 16px; display: grid; gap: 12px; }
+    .form h3 { text-align: center; font-size: 16px; font-weight: 600; color: var(--ink); }
+    .field { background: var(--card); border-radius: 8px; padding: 8px 10px; border: 1px solid var(--soft); }
+    .field label { display: block; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+    .field .val { font-size: 13px; color: var(--ink); }
+    .btn {
+      background: var(--wine); color: #fff; border-radius: 8px; padding: 12px;
+      font-weight: 600; font-size: 12px; text-align: center;
+    }
+    .btn-text { color: var(--gold); text-align: center; font-size: 12px; font-weight: 500; padding: 8px; }
+    .detail { padding: 16px; display: grid; gap: 8px; }
+    .detail h3 { font-size: 15px; line-height: 1.3; color: var(--ink); }
+    .detail .muted { color: var(--muted); font-size: 12px; }
+    .section { color: var(--gold); font-size: 14px; font-weight: 600; }
+    .divider { height: 1px; background: var(--soft); margin: 6px 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: var(--wine-soft); color: var(--gold); font-size: 10px;
+      padding: 5px 8px; border-radius: 999px; font-weight: 500;
+    }
+    .dim {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.65);
+      display: grid; place-items: center; padding: 12px;
+    }
+    .modal {
+      width: 100%; max-height: 92%; overflow: auto; background: var(--modal-bg);
+      border-radius: 14px; padding: 12px; display: grid; gap: 8px;
+      border: 1px solid var(--border);
+    }
+    .card { background: var(--card); border-radius: 10px; padding: 10px; }
+    .card h4 { text-align: center; font-size: 12px; color: var(--gold); font-weight: 700; line-height: 1.3; }
+    .kv {
+      display: grid; grid-template-columns: 78px 1fr; gap: 4px 6px;
+      font-size: 11px; padding: 5px 0; border-bottom: 1px solid var(--soft);
+    }
+    .kv b { color: var(--ink); }
+    .kv span { color: var(--muted); }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+    .actions .primary {
+      background: var(--wine); color: #fff; border-radius: 12px; padding: 10px;
+      text-align: center; font-size: 12px; font-weight: 600;
+    }
+    .actions .ghost {
+      background: var(--modal-bg); color: var(--gold); border: 2px solid var(--wine);
+      border-radius: 12px; padding: 8px; text-align: center; font-size: 12px; font-weight: 600;
+    }
+    .ghost-form { opacity: 0.35; pointer-events: none; }
+    footer.note {
+      margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);
+      color: #b9a89a; font-size: 0.9rem; line-height: 1.5; max-width: 46rem;
+    }
+    footer.note code {
+      background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 6px; font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <header class="hero">
+      <div class="brand">Ma <span>Cave</span></div>
+      <p>Design board dark — même feeling que l’app (2 onglets : Ma Cave / Ajouter). Le détail s’ouvre depuis la liste.</p>
+      <div class="meta">
+        <span class="pill">Dark UI</span>
+        <span class="pill">Wine #6e0909 · Gold #c4a574</span>
+        <span class="pill">Tabs: Ma Cave · Ajouter</span>
+      </div>
+    </header>
+
+    <section class="tokens" aria-label="Couleurs">
+      <div class="token"><div class="swatch" style="background:#0d0908"></div>Page<small>#0d0908</small></div>
+      <div class="token"><div class="swatch" style="background:#2a1814"></div>Card<small>#2a1814</small></div>
+      <div class="token"><div class="swatch" style="background:#6e0909"></div>Wine<small>#6e0909</small></div>
+      <div class="token"><div class="swatch" style="background:#c4a574"></div>Gold<small>#c4a574</small></div>
+      <div class="token"><div class="swatch" style="background:#f4ece4"></div>Ink<small>#f4ece4</small></div>
+    </section>
+
+    <nav class="nav" role="tablist">
+      <button type="button" data-filter="all" aria-selected="true">Tous</button>
+      <button type="button" data-filter="list">Liste</button>
+      <button type="button" data-filter="empty">Vide</button>
+      <button type="button" data-filter="add">Ajouter</button>
+      <button type="button" data-filter="detail">Détail</button>
+      <button type="button" data-filter="modal">Popup Gemini</button>
+    </nav>
+
+    <div class="gallery" id="gallery">
+      <article class="shot" data-id="list">
+        <h2>01 — Ma Cave (liste)</h2>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ma Cave — 3 vins</div>
+          </div>
+          <div class="content">
+            <div class="row"><div class="icon"></div><div><strong>Château Pavillon Beauregard… (2016)</strong><span>Bordeaux</span></div></div>
+            <div class="row"><div class="icon"></div><div><strong>Domaine Tempier Bandol Rouge (2019)</strong><span>Provence</span></div></div>
+            <div class="row"><div class="icon"></div><div><strong>Meursault Les Charmes (2018)</strong><span>Bourgogne</span></div></div>
+            <div class="fab">+</div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span><span>Ajouter</span></div>
+        </div></div>
+        <p>Liste + FAB. Tap → détail (pas d’onglet).</p>
+      </article>
+
+      <article class="shot" data-id="empty">
+        <h2>02 — Ma Cave (vide)</h2>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ma Cave — 0 vins</div>
+          </div>
+          <div class="content"><div class="empty">Votre cave est vide.</div><div class="fab">+</div></div>
+          <div class="tabs"><span class="on">Ma Cave</span><span>Ajouter</span></div>
+        </div></div>
+        <p>État vide.</p>
+      </article>
+
+      <article class="shot" data-id="add">
+        <h2>03 — Ajouter un vin</h2>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="content">
+            <div class="form">
+              <h3>Ajouter un nouveau vin</h3>
+              <div class="field"><label>Nom du vin</label><div class="val">Château Pavillon Beauregard…</div></div>
+              <div class="btn">Ajouter à la cave</div>
+              <div class="btn-text">Générer les infos avec Gemini</div>
+            </div>
+          </div>
+          <div class="tabs"><span>Ma Cave</span><span class="on">Ajouter</span></div>
+        </div></div>
+        <p>Formulaire + Gemini.</p>
+      </article>
+
+      <article class="shot" data-id="detail">
+        <h2>04 — Détail vin</h2>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Château Pavillon…</div>
+          </div>
+          <div class="content">
+            <div class="detail">
+              <h3>Château Pavillon Beauregard Lalande de Pomerol (2016)</h3>
+              <div class="muted">Bordeaux</div>
+              <div class="muted">Merlot, Cabernet Franc</div>
+              <div class="divider"></div>
+              <div class="section">Apogée</div>
+              <div class="muted">Entre 2020 et 2025</div>
+              <div class="section" style="margin-top:8px">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Fruits rouges mûrs</span>
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+                <span class="chip">Épices douces</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span><span>Ajouter</span></div>
+        </div></div>
+        <p>Stack push depuis la liste — pas dans le menu.</p>
+      </article>
+
+      <article class="shot" data-id="modal">
+        <h2>05 — Suggestion Gemini</h2>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="content">
+            <div class="form ghost-form">
+              <h3>Ajouter un nouveau vin</h3>
+              <div class="field"><label>Nom du vin</label><div class="val">Château…</div></div>
+              <div class="btn">Ajouter à la cave</div>
+            </div>
+            <div class="dim">
+              <div class="modal">
+                <div class="card"><h4>Château Pavillon Beauregard Lalande de Pomerol 2016</h4></div>
+                <div class="card">
+                  <div class="kv"><b>Appellation</b><span>Lalande de Pomerol</span></div>
+                  <div class="kv"><b>Région</b><span>Bordeaux</span></div>
+                  <div class="kv"><b>Millésime</b><span>2016</span></div>
+                  <div class="kv"><b>Cépage(s)</b><span>Merlot, Cabernet Franc</span></div>
+                  <div class="kv"><b>Apogée</b><span>2020 - 2025</span></div>
+                </div>
+                <div class="card">
+                  <div style="font-size:11px;font-weight:600;margin-bottom:6px;color:var(--ink)">Notes</div>
+                  <div class="chips">
+                    <span class="chip">Fruits rouges</span>
+                    <span class="chip">Cassis</span>
+                    <span class="chip">Sous-bois</span>
+                  </div>
+                </div>
+                <div class="actions">
+                  <div class="primary">Utiliser</div>
+                  <div class="ghost">Annuler</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span>Ma Cave</span><span class="on">Ajouter</span></div>
+        </div></div>
+        <p>Popup Gemini dark.</p>
+      </article>
+    </div>
+
+    <footer class="note">
+      Source of truth visuelle : <code>designs/ma-cave/index.html</code> · tokens app :
+      <code>constants/theme.ts</code>. Recharge Expo Go pour voir le dark UI.
+    </footer>
+  </div>
+  <script>
+    document.querySelectorAll('.nav button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav button').forEach((b) => b.setAttribute('aria-selected', 'false'));
+        btn.setAttribute('aria-selected', 'true');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('.shot').forEach((shot) => {
+          shot.hidden = f !== 'all' && shot.dataset.id !== f;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
