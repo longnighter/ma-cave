@@ -11,9 +11,16 @@ interface WineContextType {
 
 const WineContext = createContext<WineContextType | undefined>(undefined);
 
-/** Map a Supabase wines row (snake_case) to the app Wine shape (camelCase). */
+/** Map a Supabase wines row (snake_case) to the app Wine shape (camelCase).
+ * Extra DB columns are ignored on purpose. */
 const formatWine = (row: any): Wine => ({
-  ...row,
+  id: row.id,
+  name: row.name,
+  year: row.year,
+  grape: row.grape,
+  region: row.region,
+  appellation: row.appellation,
+  domain: row.domain,
   bestToDrink: [row.drink_from, row.drink_to],
   tastingNotes: row.tasting_notes,
   winePairing: row.wine_pairing,
@@ -26,17 +33,28 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchWines = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('wines')
-        .select('*')
-        .order('created_at', { ascending: false }); // Pour avoir les plus récents en premier
+      try {
+        const { data, error, status } = await supabase
+          .from('wines')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error("Erreur lors de la récupération des vins", error);
-      } else if (data) {
-        setWines(data.map(formatWine));
+        // Single string so RN LogBox cannot hide the payload as `null`
+        console.log(
+          `[fetchWines] status=${status} rows=${data?.length ?? 0} ` +
+            `error=${error ? `${error.message} | code=${error.code} | details=${error.details} | hint=${error.hint}` : 'none'}`,
+        );
+
+        if (error) {
+          console.error(`[fetchWines] failed: ${error.message}`);
+        } else if (data) {
+          setWines(data.map(formatWine));
+        }
+      } catch (e: any) {
+        console.error(`[fetchWines] threw: ${e?.message ?? String(e)}`);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchWines();

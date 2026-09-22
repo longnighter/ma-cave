@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { Button, Card, Chip, Divider, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
@@ -14,11 +14,10 @@ export default function AddWineScreen() {
   const router = useRouter();
   const { addWine } = useWines();
 
-      // Animation refs
-  const slideAnim = useRef(new Animated.Value(screenHeight)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
-  const backdropAnim = useRef(new Animated.Value(0)).current; // NEW: For backdrop
+  const [slideAnim] = useState(() => new Animated.Value(screenHeight));
+  const [fadeAnim] = useState(() => new Animated.Value(0));
+  const [scaleAnim] = useState(() => new Animated.Value(0.9));
+  const [backdropAnim] = useState(() => new Animated.Value(0));
 
   const defaultTuple: [number, number] = [0,0];
   const [name, setName] = useState('');
@@ -109,7 +108,7 @@ export default function AddWineScreen() {
     const newWine = {
       name: name,
       year: year, // On convertit l'année (texte) en nombre
-      region: region, 
+      region: region,
       appellation: appellation,
       grape: grape,
       tastingNotes: tastingNotes,
@@ -152,7 +151,7 @@ export default function AddWineScreen() {
 
   const handleUseSuggestion = async () => {
     if (suggestedWine) {
-    
+
       setName(suggestedWine.name)
       setYear(suggestedWine.year)
       setRegion(suggestedWine.region || "")
@@ -178,7 +177,7 @@ export default function AddWineScreen() {
       <GestureHandlerRootView style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
         <ScrollView style={styles.container}>
           <Text variant="headlineMedium" style={styles.title}>Ajouter un nouveau vin</Text>
-          
+
           <TextInput
             label="Nom du vin"
             value={name}
@@ -225,7 +224,7 @@ export default function AddWineScreen() {
         </ScrollView>
         {(isModalVisible || isAddWineSnackVisible) && (
           <Portal>
-            <GestureHandlerRootView 
+            <GestureHandlerRootView
             style={StyleSheet.absoluteFill} pointerEvents="box-none"
             >
               <Animated.View style={[styles.animatedBackdrop, { opacity: fadeAnim }]}>
@@ -349,7 +348,7 @@ export default function AddWineScreen() {
                           )}
                         </Card.Content>
                       </Card>
-                      
+
 
                       <View style={styles.modalButtonContainer} >
                         <Button
@@ -381,7 +380,7 @@ export default function AddWineScreen() {
                 {/* </Modal> */}
                 </Animated.View>
               </View>
-              <Snackbar 
+              <Snackbar
                 onDismiss={() => setIsAddWineSnackVisible(false)}
                 duration={3000}
                 visible={isAddWineSnackVisible}
@@ -420,11 +419,11 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   animatedBackdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(0, 0, 0, 0.65)',
   },
   modalPositioner: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     alignItems: 'center',
   },
