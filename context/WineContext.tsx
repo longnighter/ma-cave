@@ -14,13 +14,7 @@ const WineContext = createContext<WineContextType | undefined>(undefined);
 /** Map a Supabase wines row (snake_case) to the app Wine shape (camelCase).
  * Extra DB columns are ignored on purpose. */
 const formatWine = (row: any): Wine => ({
-  id: row.id,
-  name: row.name,
-  year: row.year,
-  grape: row.grape,
-  region: row.region,
-  appellation: row.appellation,
-  domain: row.domain,
+  ...row,
   bestToDrink: [row.drink_from, row.drink_to],
   tastingNotes: row.tasting_notes,
   winePairing: row.wine_pairing,

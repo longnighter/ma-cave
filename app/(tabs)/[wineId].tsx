@@ -52,7 +52,7 @@ export default function WineDetailScreen() {
             {wine.region && grapes ? <View style={styles.metaDot} /> : null}
             {grapes ? (
               <View style={styles.metaItem}>
-                <MaterialCommunityIcons name="grape" size={14} color={colors.accent} />
+                <MaterialCommunityIcons name="fruit-grapes" size={14} color={colors.accent} />
                 <Text style={styles.metaText}>{grapes}</Text>
               </View>
             ) : null}
