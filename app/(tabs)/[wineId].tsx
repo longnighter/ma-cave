@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
-import { colors } from '../../constants/theme';
+import { colors, getWineColorStyle } from '../../constants/theme';
 import { useWines } from '../../context/WineContext';
 
 export default function WineDetailScreen() {
@@ -21,6 +21,8 @@ export default function WineDetailScreen() {
 
   const grapes = Array.isArray(wine.grape) ? wine.grape.join(', ') : wine.grape;
   const title = wine.appellation || wine.name;
+  const colorStyle = getWineColorStyle(wine.color);
+  const showMeta = Boolean(wine.color || wine.region || grapes);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -41,15 +43,33 @@ export default function WineDetailScreen() {
           ) : null}
         </View>
 
-        {(wine.region || grapes) && (
+        {showMeta ? (
           <View style={styles.metaLine}>
+            {wine.color && colorStyle ? (
+              <View
+                style={[
+                  styles.colorPill,
+                  { backgroundColor: colorStyle.soft, borderColor: colorStyle.border },
+                ]}
+              >
+                <View style={[styles.colorDot, { backgroundColor: colorStyle.swatch }]} />
+                <Text style={styles.colorPillText}>{wine.color}</Text>
+              </View>
+            ) : wine.color ? (
+              <Text style={styles.metaText}>{wine.color}</Text>
+            ) : null}
+
+            {wine.color && wine.region ? <View style={styles.metaDot} /> : null}
+
             {wine.region ? (
               <View style={styles.metaItem}>
                 <MaterialCommunityIcons name="map-marker-outline" size={14} color={colors.accent} />
                 <Text style={styles.metaText}>{wine.region}</Text>
               </View>
             ) : null}
-            {wine.region && grapes ? <View style={styles.metaDot} /> : null}
+
+            {(wine.color || wine.region) && grapes ? <View style={styles.metaDot} /> : null}
+
             {grapes ? (
               <View style={styles.metaItem}>
                 <MaterialCommunityIcons name="fruit-grapes" size={14} color={colors.accent} />
@@ -57,7 +77,7 @@ export default function WineDetailScreen() {
               </View>
             ) : null}
           </View>
-        )}
+        ) : null}
       </View>
 
       <View style={styles.divider} />
@@ -164,6 +184,28 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: colors.soft,
+  },
+  colorPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingVertical: 4,
+    paddingLeft: 6,
+    paddingRight: 9,
+  },
+  colorDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.25)',
+  },
+  colorPillText: {
+    color: colors.ink,
+    fontSize: 12,
+    fontWeight: '600',
   },
   metaItem: {
     flexDirection: 'row',

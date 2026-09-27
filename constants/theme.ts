@@ -25,6 +25,24 @@ export const colors = {
   modalBg: '#241816',
 };
 
+/** Soft glass tones for Wine.color (Blanc | Rosé | Rouge | Orange) */
+export const wineColorTokens = {
+  Rouge: { swatch: '#8b2a2a', soft: 'rgba(139, 42, 42, 0.35)', border: 'rgba(139, 42, 42, 0.45)' },
+  Rosé: { swatch: '#c47a7a', soft: 'rgba(196, 122, 122, 0.28)', border: 'rgba(196, 122, 122, 0.45)' },
+  Blanc: { swatch: '#e8d9b0', soft: 'rgba(232, 217, 176, 0.22)', border: 'rgba(232, 217, 176, 0.4)' },
+  Orange: { swatch: '#c48a4a', soft: 'rgba(196, 138, 74, 0.28)', border: 'rgba(196, 138, 74, 0.45)' },
+} as const;
+
+export type WineColorName = keyof typeof wineColorTokens;
+
+export function getWineColorStyle(color?: string | null) {
+  if (!color) return null;
+  const key = Object.keys(wineColorTokens).find(
+    (k) => k.toLowerCase() === color.trim().toLowerCase(),
+  ) as WineColorName | undefined;
+  return key ? wineColorTokens[key] : null;
+}
+
 export const paperTheme = {
   ...MD3DarkTheme,
   colors: {

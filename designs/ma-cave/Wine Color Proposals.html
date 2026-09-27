@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ma Cave — Wine Color Proposals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --wine: #6e0909;
+      --wine-soft: rgba(110, 9, 9, 0.28);
+      --ink: #f4ece4;
+      --muted: #d5c4b5;
+      --soft: rgba(255,255,255,0.08);
+      --page: #0d0908;
+      --elevated: #1a1210;
+      --card: #2a1814;
+      --gold: #c9b48c;
+      --border: rgba(201, 180, 140, 0.32);
+      --modal-bg: #241816;
+      /* Soft glass tones — readable on dark UI */
+      --c-rouge: #8b2a2a;
+      --c-rouge-soft: rgba(139, 42, 42, 0.35);
+      --c-rose: #c47a7a;
+      --c-rose-soft: rgba(196, 122, 122, 0.28);
+      --c-blanc: #e8d9b0;
+      --c-blanc-soft: rgba(232, 217, 176, 0.22);
+      --c-orange: #c48a4a;
+      --c-orange-soft: rgba(196, 138, 74, 0.28);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Outfit, system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #3a1c18 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #4a2018 0%, transparent 50%),
+        linear-gradient(180deg, #1a1210 0%, #0d0908 100%);
+      color: #f4ece4;
+      min-height: 100vh;
+    }
+    .board { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+    .back {
+      display: inline-flex; color: var(--gold); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;
+    }
+    header.hero { display: grid; gap: 10px; margin-bottom: 24px; }
+    header.hero .brand {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;
+    }
+    header.hero .brand span { color: var(--gold); }
+    header.hero p { max-width: 44rem; color: #d5c4b5; font-size: 1.02rem; line-height: 1.5; }
+    .assumptions {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 16px 18px; margin-bottom: 28px;
+      color: #c9b8a8; font-size: 0.9rem; line-height: 1.55; max-width: 48rem;
+    }
+    .assumptions strong { color: var(--ink); }
+    .assumptions ul { margin: 8px 0 0 1.1rem; }
+    .palette {
+      display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 32px;
+    }
+    .swatch-card {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 10px 14px; font-size: 0.85rem;
+    }
+    .swatch-card .dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      flex: none;
+    }
+    .swatch-card small { display: block; color: #b9a89a; font-size: 0.72rem; }
+    .section-title {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.35rem; margin: 8px 0 20px; color: #f0e4d8;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 36px; align-items: start; margin-bottom: 48px;
+    }
+    .shot { display: grid; gap: 14px; justify-items: center; }
+    .shot h2 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.15rem; font-weight: 500; text-align: center;
+    }
+    .shot .label {
+      display: inline-block; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 4px; text-align: center; width: 100%;
+    }
+    .shot p.desc {
+      color: #b9a89a; font-size: 0.88rem; text-align: center;
+      max-width: 280px; line-height: 1.45;
+    }
+    .phone {
+      width: 300px; height: 640px; background: #111; border-radius: 38px; padding: 10px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 60px rgba(0,0,0,0.45);
+      position: relative;
+    }
+    .phone::before {
+      content: ""; position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 8px; background: #222; border-radius: 999px; z-index: 2;
+    }
+    .screen {
+      width: 100%; height: 100%; background: var(--page); color: var(--ink);
+      border-radius: 30px; overflow: hidden; display: flex; flex-direction: column;
+    }
+    .status {
+      padding: 18px 14px 10px; border-bottom: 1px solid var(--soft);
+      background: var(--elevated); flex: none;
+    }
+    .status .time-row {
+      display: flex; justify-content: space-between; font-size: 11px;
+      font-weight: 600; margin-bottom: 8px;
+    }
+    .status .title { text-align: center; font-size: 13px; font-weight: 600; }
+    .scroll { flex: 1; overflow: auto; padding: 18px 16px 24px; }
+    .tabs {
+      display: flex; justify-content: space-around;
+      padding: 12px 18px 18px; border-top: 1px solid var(--soft);
+      background: var(--elevated); font-size: 11px; color: var(--muted); flex: none;
+    }
+    .tabs .on { color: var(--gold); font-weight: 600; }
+    .ico {
+      width: 14px; height: 14px; flex: none;
+      stroke: currentColor; fill: none; stroke-width: 1.6;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .year-badge {
+      display: inline-block; font-size: 11px; font-weight: 700; color: var(--gold);
+      border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px;
+    }
+    .section { color: var(--gold); font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .body { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .divider { height: 1px; background: var(--soft); margin: 14px 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: var(--wine-soft); color: var(--muted); font-size: 10px;
+      padding: 5px 9px; border-radius: 999px; font-weight: 500;
+    }
+    .block + .block { margin-top: 16px; }
+
+    /* Shared Option D card base */
+    .id-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px; padding: 14px 14px 12px;
+    }
+    .id-domain {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: var(--gold);
+      letter-spacing: 0.03em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .id-domain .ico { color: var(--gold); width: 13px; height: 13px; }
+    .id-head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+    .id-title {
+      flex: 1; font-family: Fraunces, Georgia, serif;
+      font-size: 17px; font-weight: 600; line-height: 1.25;
+    }
+    .meta-line {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+      color: var(--muted); font-size: 12px; line-height: 1.3;
+      padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .meta-item { display: inline-flex; align-items: center; gap: 5px; }
+    .meta-item .ico { color: var(--gold); }
+    .meta-sep {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(201, 180, 140, 0.6); flex: none;
+    }
+
+    /* ——— 1: Color pill in meta ——— */
+    .color-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--c-rouge-soft);
+      border: 1px solid rgba(139, 42, 42, 0.45);
+      border-radius: 999px; padding: 4px 9px 4px 6px;
+      font-size: 11px; font-weight: 600; color: var(--ink);
+    }
+    .color-pill .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--c-rouge);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    .color-pill.rose { background: var(--c-rose-soft); border-color: rgba(196,122,122,0.45); }
+    .color-pill.rose .dot { background: var(--c-rose); }
+    .color-pill.blanc { background: var(--c-blanc-soft); border-color: rgba(232,217,176,0.4); }
+    .color-pill.blanc .dot { background: var(--c-blanc); }
+    .color-pill.orange { background: var(--c-orange-soft); border-color: rgba(196,138,74,0.45); }
+    .color-pill.orange .dot { background: var(--c-orange); }
+
+    /* ——— 2: Edge accent ——— */
+    .id-card.edge {
+      border-left: 3px solid var(--c-rouge);
+      background:
+        linear-gradient(90deg, var(--c-rouge-soft) 0%, transparent 42%),
+        rgba(255, 255, 255, 0.08);
+    }
+    .color-inline {
+      display: inline-flex; align-items: center; gap: 5px;
+      color: var(--muted); font-size: 12px;
+    }
+    .color-inline .dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--c-rouge);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    /* ——— 3: Glass droplet by title ——— */
+    .title-tools { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .glass-drop {
+      width: 22px; height: 28px; position: relative;
+    }
+    .glass-drop::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: var(--c-rouge);
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      box-shadow: inset 0 -4px 6px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.15);
+      clip-path: path('M11 2 C11 2 3 10 3 16 A8 8 0 0 0 19 16 C19 10 11 2 11 2 Z');
+    }
+    /* simpler droplet without clip-path for better support */
+    .droplet {
+      width: 18px; height: 22px;
+      background: radial-gradient(circle at 35% 30%, #a63a3a, var(--c-rouge) 70%);
+      border-radius: 50% 50% 50% 50% / 42% 42% 58% 58%;
+      border: 1px solid rgba(255,255,255,0.22);
+      transform: rotate(180deg);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.15);
+    }
+    .droplet-label {
+      font-size: 9px; font-weight: 600; color: var(--muted);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+
+    /* Gemini modal */
+    .dim {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.65);
+      display: grid; place-items: center; padding: 12px;
+    }
+    .modal {
+      width: 100%; max-height: 92%; overflow: auto; background: var(--modal-bg);
+      border-radius: 14px; padding: 12px; display: grid; gap: 8px;
+      border: 1px solid var(--border);
+    }
+    .m-card { background: var(--card); border-radius: 10px; padding: 10px; }
+    .m-card h4 {
+      text-align: center; font-size: 12px; color: var(--gold);
+      font-weight: 700; line-height: 1.3;
+    }
+    .kv {
+      display: grid; grid-template-columns: 78px 1fr; gap: 4px 6px;
+      font-size: 11px; padding: 5px 0; border-bottom: 1px solid var(--soft);
+      align-items: center;
+    }
+    .kv:last-child { border-bottom: 0; }
+    .kv b { color: var(--ink); }
+    .kv span { color: var(--muted); }
+    .kv .val-color { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+    .kv .val-color .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--c-rouge); border: 1px solid rgba(255,255,255,0.25);
+    }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+    .actions .primary {
+      background: var(--wine); color: #fff; border-radius: 12px; padding: 10px;
+      text-align: center; font-size: 12px; font-weight: 600;
+    }
+    .actions .ghost {
+      background: var(--modal-bg); color: var(--gold); border: 2px solid var(--wine);
+      border-radius: 12px; padding: 8px; text-align: center; font-size: 12px; font-weight: 600;
+    }
+    .m-title-row {
+      display: flex; align-items: flex-start; gap: 8px; justify-content: center;
+      flex-wrap: wrap;
+    }
+    .m-title-row h4 { text-align: left; flex: 1; min-width: 0; }
+    .m-card.banner {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(6px);
+    }
+    .m-card.banner h4 { color: #f4ece4; }
+    .m-card.banner-rouge {
+      background: rgba(110, 36, 36, 0.72);
+      border-color: rgba(139, 42, 42, 0.55);
+    }
+    .m-card.banner-rose {
+      background: rgba(122, 64, 64, 0.68);
+      border-color: rgba(196, 122, 122, 0.45);
+    }
+    .m-card.banner-blanc {
+      background: rgba(201, 184, 138, 0.62);
+      border-color: rgba(232, 217, 176, 0.45);
+    }
+    .m-card.banner-blanc h4 { color: #2a2018; }
+    .m-card.banner-orange {
+      background: rgba(138, 90, 46, 0.68);
+      border-color: rgba(196, 138, 74, 0.5);
+    }
+    .m-card .year-with-drop {
+      display: inline-flex; align-items: center; gap: 7px; color: var(--muted);
+    }
+    .m-card .year-with-drop .droplet {
+      width: 12px; height: 15px;
+    }
+    .ghost-form { opacity: 0.3; pointer-events: none; padding: 18px 16px; }
+    .form-field {
+      background: var(--card); border-radius: 8px; padding: 8px 10px;
+      border: 1px solid var(--soft); margin-top: 10px;
+    }
+    .form-field label { display: block; font-size: 10px; color: var(--muted); }
+    .form-field .val { font-size: 13px; }
+
+    footer.note {
+      margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);
+      color: #b9a89a; font-size: 0.9rem; line-height: 1.5; max-width: 46rem;
+    }
+    footer.note a { color: var(--gold); }
+    footer.note code {
+      background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 6px; font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <a class="back" href="index.html">← Design board</a>
+    <header class="hero">
+      <div class="brand">Couleur du vin — <span>propositions</span></div>
+      <p>Détail : Option 1 (pill) implémentée. Popup Gemini : 3 variantes <em>sans</em> rangée Couleur — G1 / G2 / G3 ci-dessous.</p>
+    </header>
+
+    <div class="assumptions">
+      <strong>Contexte &amp; hypothèses</strong>
+      <ul>
+        <li>Champ déjà en data : <code>Wine.color</code> — Gemini renvoie Blanc, Rosé, Rouge, Orange.</li>
+        <li>Pas encore affiché dans le détail ni le popup.</li>
+        <li>Accent UI (#c9b48c) reste pour domaine / sections ; la couleur du vin est un signal distinct.</li>
+        <li>Exemple principal : Rouge. Palette des 4 types ci-dessous.</li>
+      </ul>
+    </div>
+
+    <div class="palette" aria-label="Palette couleurs">
+      <div class="swatch-card"><span class="dot" style="background:#8b2a2a"></span><div>Rouge<small>#8b2a2a · soft 35%</small></div></div>
+      <div class="swatch-card"><span class="dot" style="background:#c47a7a"></span><div>Rosé<small>#c47a7a · soft 28%</small></div></div>
+      <div class="swatch-card"><span class="dot" style="background:#e8d9b0"></span><div>Blanc<small>#e8d9b0 · soft 22%</small></div></div>
+      <div class="swatch-card"><span class="dot" style="background:#c48a4a"></span><div>Orange<small>#c48a4a · soft 28%</small></div></div>
+    </div>
+
+    <h3 class="section-title">Détail vin</h3>
+    <div class="gallery">
+      <!-- Option 1 -->
+      <article class="shot" data-screen-label="color-1">
+        <div>
+          <div class="label">Option 1</div>
+          <h2>Pill dans la meta</h2>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Détail</div>
+          </div>
+          <div class="scroll">
+            <div class="id-card">
+              <div class="id-domain">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+                Château Pavillon Beauregard
+              </div>
+              <div class="id-head">
+                <div class="id-title">Lalande de Pomerol</div>
+                <span class="year-badge">2016</span>
+              </div>
+              <div class="meta-line">
+                <span class="color-pill"><span class="dot"></span>Rouge</span>
+                <span class="meta-sep"></span>
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                  Bordeaux
+                </span>
+                <span class="meta-sep"></span>
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24"><ellipse cx="12" cy="8" rx="3.2" ry="4"/><ellipse cx="7.5" cy="13" rx="2.8" ry="3.5"/><ellipse cx="16.5" cy="13" rx="2.8" ry="3.5"/><path d="M12 12v9"/></svg>
+                  Merlot, Cab. Franc
+                </span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="block">
+              <div class="section">Apogée</div>
+              <div class="body">Entre 2020 et 2025</div>
+            </div>
+            <div class="block">
+              <div class="section">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+                <span class="chip">Épices</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Pastille + libellé en tête de la ligne meta. Clair, compact, même rythme que région / cépages.</p>
+      </article>
+
+      <!-- Option 2 -->
+      <article class="shot" data-screen-label="color-2">
+        <div>
+          <div class="label">Option 2</div>
+          <h2>Bandeau latéral</h2>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Détail</div>
+          </div>
+          <div class="scroll">
+            <div class="id-card edge">
+              <div class="id-domain">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+                Château Pavillon Beauregard
+              </div>
+              <div class="id-head">
+                <div class="id-title">Lalande de Pomerol</div>
+                <span class="year-badge">2016</span>
+              </div>
+              <div class="meta-line">
+                <span class="color-inline"><span class="dot"></span>Rouge</span>
+                <span class="meta-sep"></span>
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                  Bordeaux
+                </span>
+                <span class="meta-sep"></span>
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24"><ellipse cx="12" cy="8" rx="3.2" ry="4"/><ellipse cx="7.5" cy="13" rx="2.8" ry="3.5"/><ellipse cx="16.5" cy="13" rx="2.8" ry="3.5"/><path d="M12 12v9"/></svg>
+                  Merlot, Cab. Franc
+                </span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="block">
+              <div class="section">Apogée</div>
+              <div class="body">Entre 2020 et 2025</div>
+            </div>
+            <div class="block">
+              <div class="section">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Bord gauche + léger wash teinté. La couleur se lit sans lire le texte ; label discret dans la meta.</p>
+      </article>
+
+      <!-- Option 3 -->
+      <article class="shot" data-screen-label="color-3">
+        <div>
+          <div class="label">Option 3</div>
+          <h2>Goutte + millésime</h2>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">← Détail</div>
+          </div>
+          <div class="scroll">
+            <div class="id-card">
+              <div class="id-domain">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+                Château Pavillon Beauregard
+              </div>
+              <div class="id-head">
+                <div class="id-title">Lalande de Pomerol</div>
+                <div class="title-tools">
+                  <div class="droplet" title="Rouge" aria-label="Rouge"></div>
+                  <span class="year-badge">2016</span>
+                </div>
+              </div>
+              <div class="meta-line">
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                  Bordeaux
+                </span>
+                <span class="meta-sep"></span>
+                <span class="meta-item">
+                  <svg class="ico" viewBox="0 0 24 24"><ellipse cx="12" cy="8" rx="3.2" ry="4"/><ellipse cx="7.5" cy="13" rx="2.8" ry="3.5"/><ellipse cx="16.5" cy="13" rx="2.8" ry="3.5"/><path d="M12 12v9"/></svg>
+                  Merlot, Cab. Franc
+                </span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="block">
+              <div class="section">Apogée</div>
+              <div class="body">Entre 2020 et 2025</div>
+            </div>
+            <div class="block">
+              <div class="section">Notes de dégustation</div>
+              <div class="chips">
+                <span class="chip">Cassis</span>
+                <span class="chip">Sous-bois</span>
+                <span class="chip">Épices</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Goutte de verre à côté du millésime — signal purement visuel. Accessible via label / a11y text.</p>
+      </article>
+    </div>
+
+    <h3 class="section-title">Popup Gemini — sans ligne « Couleur »</h3>
+    <p style="color:#b9a89a;font-size:0.92rem;max-width:42rem;margin:-8px 0 20px;line-height:1.45">
+      G2 : bandeau titre entièrement teinté (pas de fade à moitié). Les 4 couleurs ci-dessous. G1 / G3 restent en option.
+    </p>
+    <div class="gallery">
+      <article class="shot" data-screen-label="gemini-g1">
+        <div>
+          <div class="label">Popup G1</div>
+          <h2>Pill sous le titre</h2>
+        </div>
+        <div class="phone"><div class="screen" style="position:relative">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="ghost-form">
+            <div style="text-align:center;font-weight:600;margin-bottom:8px">Ajouter un nouveau vin</div>
+            <div class="form-field"><label>Nom</label><div class="val">Château…</div></div>
+          </div>
+          <div class="dim">
+            <div class="modal">
+              <div class="m-card" style="display:grid;gap:8px;justify-items:center">
+                <h4 style="margin:0">Château Pavillon Beauregard Lalande de Pomerol</h4>
+                <span class="color-pill"><span class="dot"></span>Rouge</span>
+              </div>
+              <div class="m-card">
+                <div class="kv"><b>Région</b><span>Bordeaux</span></div>
+                <div class="kv"><b>Millésime</b><span>2016</span></div>
+                <div class="kv"><b>Cépage(s)</b><span>Merlot, Cab. Franc</span></div>
+                <div class="kv"><b>Domaine</b><span>Château Pavillon Beauregard</span></div>
+                <div class="kv"><b>Apogée</b><span>2020 - 2025</span></div>
+              </div>
+              <div class="actions">
+                <div class="primary">Utiliser</div>
+                <div class="ghost">Annuler</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Même pill que le détail, placée sous le nom — identité visuelle partagée, zéro ligne KV.</p>
+      </article>
+
+      <article class="shot" data-screen-label="gemini-g2-rouge">
+        <div>
+          <div class="label">Popup G2 · Rouge</div>
+          <h2>Bandeau plein</h2>
+        </div>
+        <div class="phone"><div class="screen" style="position:relative">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="ghost-form">
+            <div style="text-align:center;font-weight:600;margin-bottom:8px">Ajouter un nouveau vin</div>
+            <div class="form-field"><label>Nom</label><div class="val">Château…</div></div>
+          </div>
+          <div class="dim">
+            <div class="modal">
+              <div class="m-card banner banner-rouge">
+                <h4>Château Pavillon Beauregard Lalande de Pomerol</h4>
+              </div>
+              <div class="m-card">
+                <div class="kv"><b>Région</b><span>Bordeaux</span></div>
+                <div class="kv"><b>Millésime</b><span>2016</span></div>
+                <div class="kv"><b>Cépage(s)</b><span>Merlot, Cab. Franc</span></div>
+                <div class="kv"><b>Domaine</b><span>Château Pavillon Beauregard</span></div>
+                <div class="kv"><b>Apogée</b><span>2020 - 2025</span></div>
+              </div>
+              <div class="actions">
+                <div class="primary">Utiliser</div>
+                <div class="ghost">Annuler</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Bandeau titre teinté avec un peu de transparence — pas de fade latéral.</p>
+      </article>
+
+      <article class="shot" data-screen-label="gemini-g2-rose">
+        <div>
+          <div class="label">Popup G2 · Rosé</div>
+          <h2>Bandeau plein</h2>
+        </div>
+        <div class="phone"><div class="screen" style="position:relative">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="ghost-form">
+            <div style="text-align:center;font-weight:600;margin-bottom:8px">Ajouter un nouveau vin</div>
+            <div class="form-field"><label>Nom</label><div class="val">Tempier…</div></div>
+          </div>
+          <div class="dim">
+            <div class="modal">
+              <div class="m-card banner banner-rose">
+                <h4>Domaine Tempier Bandol Rosé</h4>
+              </div>
+              <div class="m-card">
+                <div class="kv"><b>Région</b><span>Provence</span></div>
+                <div class="kv"><b>Millésime</b><span>2022</span></div>
+                <div class="kv"><b>Cépage(s)</b><span>Mourvèdre, Grenache</span></div>
+                <div class="kv"><b>Domaine</b><span>Domaine Tempier</span></div>
+                <div class="kv"><b>Apogée</b><span>2023 - 2026</span></div>
+              </div>
+              <div class="actions">
+                <div class="primary">Utiliser</div>
+                <div class="ghost">Annuler</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Même bandeau plein, teinte rosé.</p>
+      </article>
+
+      <article class="shot" data-screen-label="gemini-g2-blanc">
+        <div>
+          <div class="label">Popup G2 · Blanc</div>
+          <h2>Bandeau plein</h2>
+        </div>
+        <div class="phone"><div class="screen" style="position:relative">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="ghost-form">
+            <div style="text-align:center;font-weight:600;margin-bottom:8px">Ajouter un nouveau vin</div>
+            <div class="form-field"><label>Nom</label><div class="val">Meursault…</div></div>
+          </div>
+          <div class="dim">
+            <div class="modal">
+              <div class="m-card banner banner-blanc">
+                <h4>Meursault Les Charmes</h4>
+              </div>
+              <div class="m-card">
+                <div class="kv"><b>Région</b><span>Bourgogne</span></div>
+                <div class="kv"><b>Millésime</b><span>2018</span></div>
+                <div class="kv"><b>Cépage(s)</b><span>Chardonnay</span></div>
+                <div class="kv"><b>Domaine</b><span>Domaine des Comtes Lafon</span></div>
+                <div class="kv"><b>Apogée</b><span>2022 - 2030</span></div>
+              </div>
+              <div class="actions">
+                <div class="primary">Utiliser</div>
+                <div class="ghost">Annuler</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Blanc : bandeau or pâle, titre plus sombre pour le contraste.</p>
+      </article>
+
+      <article class="shot" data-screen-label="gemini-g2-orange">
+        <div>
+          <div class="label">Popup G2 · Orange</div>
+          <h2>Bandeau plein</h2>
+        </div>
+        <div class="phone"><div class="screen" style="position:relative">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="ghost-form">
+            <div style="text-align:center;font-weight:600;margin-bottom:8px">Ajouter un nouveau vin</div>
+            <div class="form-field"><label>Nom</label><div class="val">Skin contact…</div></div>
+          </div>
+          <div class="dim">
+            <div class="modal">
+              <div class="m-card banner banner-orange">
+                <h4>Radikon Ribolla Gialla</h4>
+              </div>
+              <div class="m-card">
+                <div class="kv"><b>Région</b><span>Frioul</span></div>
+                <div class="kv"><b>Millésime</b><span>2017</span></div>
+                <div class="kv"><b>Cépage(s)</b><span>Ribolla Gialla</span></div>
+                <div class="kv"><b>Domaine</b><span>Radikon</span></div>
+                <div class="kv"><b>Apogée</b><span>2020 - 2028</span></div>
+              </div>
+              <div class="actions">
+                <div class="primary">Utiliser</div>
+                <div class="ghost">Annuler</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Orange / skin-contact : bandeau ambré plein.</p>
+      </article>
+
+      <article class="shot" data-screen-label="gemini-g3">
+        <div>
+          <div class="label">Popup G3</div>
+          <h2>Goutte sur Millésime</h2>
+        </div>
+        <div class="phone"><div class="screen" style="position:relative">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Ajouter un vin</div>
+          </div>
+          <div class="ghost-form">
+            <div style="text-align:center;font-weight:600;margin-bottom:8px">Ajouter un nouveau vin</div>
+            <div class="form-field"><label>Nom</label><div class="val">Château…</div></div>
+          </div>
+          <div class="dim">
+            <div class="modal">
+              <div class="m-card"><h4>Château Pavillon Beauregard Lalande de Pomerol</h4></div>
+              <div class="m-card">
+                <div class="kv"><b>Région</b><span>Bordeaux</span></div>
+                <div class="kv"><b>Millésime</b><span class="year-with-drop"><span class="droplet" aria-label="Rouge"></span>2016</span></div>
+                <div class="kv"><b>Cépage(s)</b><span>Merlot, Cab. Franc</span></div>
+                <div class="kv"><b>Domaine</b><span>Château Pavillon Beauregard</span></div>
+                <div class="kv"><b>Apogée</b><span>2020 - 2025</span></div>
+              </div>
+              <div class="actions">
+                <div class="primary">Utiliser</div>
+                <div class="ghost">Annuler</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Signal discret collé à une ligne existante. Compact, mais moins explicite que G1.</p>
+      </article>
+    </div>
+
+    <h3 class="section-title">Référence palette</h3>
+    <div class="gallery">
+      <article class="shot" data-screen-label="types-row">
+        <div>
+          <div class="label">Tokens</div>
+          <h2>Les 4 pastilles</h2>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="status">
+            <div class="time-row"><span>9:41</span><span>▌▌▌ 🔋</span></div>
+            <div class="title">Palette</div>
+          </div>
+          <div class="scroll" style="display:grid;gap:14px;align-content:start">
+            <div class="id-card">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Pills (détail Option 1)</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <span class="color-pill"><span class="dot"></span>Rouge</span>
+                <span class="color-pill rose"><span class="dot"></span>Rosé</span>
+                <span class="color-pill blanc"><span class="dot"></span>Blanc</span>
+                <span class="color-pill orange"><span class="dot"></span>Orange</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Ma Cave</span></div>
+        </div></div>
+        <p class="desc">Dans l’app : <code>wineColorTokens</code> + <code>getWineColorStyle()</code> dans <code>theme.ts</code>.</p>
+      </article>
+    </div>
+
+    <footer class="note">
+      Détail : <strong>Option 1 implémentée</strong> dans <code>[wineId].tsx</code>.
+      Popup G2 : bandeau titre teinté <strong>plein + transparent</strong> (~65–72% opacité) pour Rouge / Rosé / Blanc / Orange.
+      Board : <a href="index.html">index.html</a>.
+    </footer>
+  </div>
+</body>
+</html>
