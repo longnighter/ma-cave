@@ -22,6 +22,7 @@ export default function AddWineScreen() {
   const defaultTuple: [number, number] = [0,0];
   const [name, setName] = useState('');
   const [year, setYear] = useState(Number);
+  const [color, setColor] = useState(String);
   const [region, setRegion] = useState('');
   const [appellation, setAppellation] = useState(String);
   const [grape, setGrape] = useState([""]);
@@ -108,6 +109,7 @@ export default function AddWineScreen() {
     const newWine = {
       name: name,
       year: year, // On convertit l'année (texte) en nombre
+      color: color,
       region: region,
       appellation: appellation,
       grape: grape,
@@ -154,6 +156,7 @@ export default function AddWineScreen() {
 
       setName(suggestedWine.name)
       setYear(suggestedWine.year)
+      setColor(suggestedWine.color)
       setRegion(suggestedWine.region || "")
       setAppellation(suggestedWine.appellation || "")
       setGrape(suggestedWine.grape || [])
