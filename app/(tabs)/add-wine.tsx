@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { Button, Card, Chip, Divider, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
-import { colors } from '../../constants/theme';
+import { colors, getWineColorStyle } from '../../constants/theme';
 import { useWines } from '../../context/WineContext';
 import { Wine } from "../../models/Wine.ts";
 
@@ -34,6 +34,7 @@ export default function AddWineScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [suggestedWine, setSuggestedWine] = useState<Wine | null>(null);
   const [isAddWineSnackVisible, setIsAddWineSnackVisible] = useState(false)
+  const suggestedColorStyle = getWineColorStyle(suggestedWine?.color);
 
   useEffect(() => {
     if (isModalVisible) {
@@ -251,25 +252,31 @@ export default function AddWineScreen() {
                   ]}
                 >
                   {suggestedWine && (
-                  // <Animated.View
-                  //   style={[
-                  //     styles.animatedModalContent,
-                  //     {
-                  //       opacity: fadeAnim,
-                  //       transform: [
-                  //         { translateY: slideAnim },
-                  //         { scale: scaleAnim }
-                  //       ],
-                  //     },
-                  //   ]}
-                  // >
                     <ScrollView contentContainerStyle={styles.modalContent}>
-
-                      <Card style={styles.infoCard}>
+                      <Card
+                        style={[
+                          styles.infoCard,
+                          suggestedColorStyle
+                            ? {
+                                backgroundColor: suggestedColorStyle.banner,
+                                borderColor: suggestedColorStyle.bannerBorder,
+                                borderWidth: 1,
+                              }
+                            : null,
+                        ]}
+                      >
                         <Card.Content>
-                          <Text variant="titleLarge" style={styles.modalSubTitle}>
-                          {suggestedWine.name || name}
-                        </Text>
+                          <Text
+                            variant="titleLarge"
+                            style={[
+                              styles.modalSubTitle,
+                              suggestedColorStyle
+                                ? { color: suggestedColorStyle.bannerText }
+                                : null,
+                            ]}
+                          >
+                            {suggestedWine.name || name}
+                          </Text>
                         </Card.Content>
                       </Card>
 
@@ -378,7 +385,6 @@ export default function AddWineScreen() {
                         </Button>
                       </View>
                     </ScrollView>
-                  //</Animated.View>
                 )}
                 {/* </Modal> */}
                 </Animated.View>

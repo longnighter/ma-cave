@@ -27,10 +27,38 @@ export const colors = {
 
 /** Soft glass tones for Wine.color (Blanc | Rosé | Rouge | Orange) */
 export const wineColorTokens = {
-  Rouge: { swatch: '#8b2a2a', soft: 'rgba(139, 42, 42, 0.35)', border: 'rgba(139, 42, 42, 0.45)' },
-  Rosé: { swatch: '#c47a7a', soft: 'rgba(196, 122, 122, 0.28)', border: 'rgba(196, 122, 122, 0.45)' },
-  Blanc: { swatch: '#e8d9b0', soft: 'rgba(232, 217, 176, 0.22)', border: 'rgba(232, 217, 176, 0.4)' },
-  Orange: { swatch: '#c48a4a', soft: 'rgba(196, 138, 74, 0.28)', border: 'rgba(196, 138, 74, 0.45)' },
+  Rouge: {
+    swatch: '#8b2a2a',
+    soft: 'rgba(139, 42, 42, 0.35)',
+    border: 'rgba(139, 42, 42, 0.45)',
+    banner: 'rgba(110, 36, 36, 0.72)',
+    bannerBorder: 'rgba(139, 42, 42, 0.55)',
+    bannerText: '#f4ece4',
+  },
+  Rosé: {
+    swatch: '#c47a7a',
+    soft: 'rgba(196, 122, 122, 0.28)',
+    border: 'rgba(196, 122, 122, 0.45)',
+    banner: 'rgba(122, 64, 64, 0.68)',
+    bannerBorder: 'rgba(196, 122, 122, 0.45)',
+    bannerText: '#f4ece4',
+  },
+  Blanc: {
+    swatch: '#e8d9b0',
+    soft: 'rgba(232, 217, 176, 0.22)',
+    border: 'rgba(232, 217, 176, 0.4)',
+    banner: 'rgba(201, 184, 138, 0.62)',
+    bannerBorder: 'rgba(232, 217, 176, 0.45)',
+    bannerText: '#2a2018',
+  },
+  Orange: {
+    swatch: '#c48a4a',
+    soft: 'rgba(196, 138, 74, 0.28)',
+    border: 'rgba(196, 138, 74, 0.45)',
+    banner: 'rgba(138, 90, 46, 0.68)',
+    bannerBorder: 'rgba(196, 138, 74, 0.5)',
+    bannerText: '#f4ece4',
+  },
 } as const;
 
 export type WineColorName = keyof typeof wineColorTokens;

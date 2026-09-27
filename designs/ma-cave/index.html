@@ -224,7 +224,7 @@
   <div class="board">
     <header class="hero">
       <div class="brand">Ma <span>Cave</span></div>
-      <p>Design board dark — état actuel de l’app. FAB pour ajouter, long-press pour sélection multiple. Propositions détail vin → fichier séparé.</p>
+      <p>Design board dark — état actuel de l’app. Détail avec pill couleur · Popup Gemini avec bandeau teinté transparent. Propositions → fichiers séparés.</p>
       <div class="meta">
         <span class="pill">Dark UI</span>
         <span class="pill">Wine #6e0909 · Accent #c9b48c</span>
@@ -344,6 +344,8 @@
                   <span style="border:1px solid var(--border);border-radius:6px;padding:2px 6px;font-size:10px;font-weight:700;color:var(--gold)">2016</span>
                 </div>
                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-top:8px;border-top:1px solid var(--soft);color:var(--muted);font-size:11px">
+                  <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(139,42,42,0.35);border:1px solid rgba(139,42,42,0.45);border-radius:999px;padding:3px 8px 3px 5px;color:var(--ink);font-weight:600;font-size:10px"><span style="width:8px;height:8px;border-radius:50%;background:#8b2a2a;border:1px solid rgba(255,255,255,0.25)"></span>Rouge</span>
+                  <span style="width:3px;height:3px;border-radius:50%;background:var(--border)"></span>
                   <span>⌖ Bordeaux</span>
                   <span style="width:3px;height:3px;border-radius:50%;background:var(--border)"></span>
                   <span>◈ Merlot, Cabernet Franc</span>
@@ -367,7 +369,7 @@
           </div>
           <div class="tabs"><span class="on">Ma Cave</span></div>
         </div></div>
-        <p>Option D appliquée — tokens <code>theme.ts</code>.</p>
+        <p>Option D + pill couleur (Option 1).</p>
       </article>
 
       <article class="shot" data-id="modal">
@@ -385,7 +387,9 @@
             </div>
             <div class="dim">
               <div class="modal">
-                <div class="card"><h4>Château Pavillon Beauregard Lalande de Pomerol</h4></div>
+                <div class="card" style="background:rgba(110,36,36,0.72);border:1px solid rgba(139,42,42,0.55)">
+                  <h4 style="color:#f4ece4">Château Pavillon Beauregard Lalande de Pomerol</h4>
+                </div>
                 <div class="card">
                   <div class="kv"><b>Appellation</b><span>Lalande de Pomerol</span></div>
                   <div class="kv"><b>Région</b><span>Bordeaux</span></div>
@@ -418,15 +422,16 @@
           </div>
           <div class="tabs"><span class="on">Ma Cave</span></div>
         </div></div>
-        <p>Popup Gemini : Domaine + accords mets &amp; vins.</p>
+        <p>Bandeau titre teinté transparent (G2) — pas de ligne Couleur.</p>
       </article>
     </div>
 
     <footer class="note">
       Source of truth visuelle : <code>designs/ma-cave/index.html</code> · tokens :
       <code>constants/theme.ts</code>.
-      Propositions page détail :
-      <a href="Wine%20Details%20Proposals.html">Wine Details Proposals.html</a>.
+      Propositions :
+      <a href="Wine%20Details%20Proposals.html">détail</a> ·
+      <a href="Wine%20Color%20Proposals.html">couleur</a>.
     </footer>
   </div>
   <script>
