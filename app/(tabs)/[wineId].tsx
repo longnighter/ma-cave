@@ -28,7 +28,7 @@ export default function WineDetailScreen() {
       <View style={styles.idCard}>
         {wine.domain ? (
           <View style={styles.domainRow}>
-            <MaterialCommunityIcons name="home-city-outline" size={14} color={colors.accent} />
+            <MaterialCommunityIcons name="home-city-outline" size={18} color={colors.accent} />
             <Text style={styles.domain}>{wine.domain}</Text>
           </View>
         ) : null}
@@ -62,7 +62,7 @@ export default function WineDetailScreen() {
 
             {wine.region ? (
               <View style={styles.metaItem}>
-                <MaterialCommunityIcons name="map-marker-outline" size={14} color={colors.accent} />
+                <MaterialCommunityIcons name="map-marker-outline" size={18} color={colors.accent} />
                 <Text style={styles.metaText}>{wine.region}</Text>
               </View>
             ) : null}
@@ -71,7 +71,7 @@ export default function WineDetailScreen() {
 
             {grapes ? (
               <View style={styles.metaItem}>
-                <MaterialCommunityIcons name="fruit-grapes" size={14} color={colors.accent} />
+                <MaterialCommunityIcons name="fruit-grapes" size={18} color={colors.accent} />
                 <Text style={styles.metaText}>{grapes}</Text>
               </View>
             ) : null}
@@ -132,112 +132,114 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cardGlass,
     borderColor: colors.cardGlassBorder,
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 12,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
   },
   domainRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 8,
+    gap: 8,
+    marginBottom: 10,
   },
   domain: {
     color: colors.accent,
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: '600',
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 8,
-    marginBottom: 10,
+    gap: 12,
+    marginBottom: 12,
   },
   title: {
     flex: 1,
     color: colors.ink,
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '700',
-    lineHeight: 26,
+    lineHeight: 30,
   },
   yearBadge: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
-    borderRadius: 6,
-    paddingHorizontal: 7,
-    paddingVertical: 2,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginTop: 2,
   },
   yearText: {
     color: colors.accent,
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: '700',
   },
   metaLine: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: 8,
-    paddingTop: 10,
+    gap: 10,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: colors.soft,
   },
   colorPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 7,
     borderWidth: 1,
     borderRadius: 999,
-    paddingVertical: 4,
-    paddingLeft: 6,
-    paddingRight: 9,
+    paddingVertical: 6,
+    paddingLeft: 8,
+    paddingRight: 12,
   },
   colorDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.25)',
   },
   colorPillText: {
     color: colors.ink,
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: '600',
   },
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
     maxWidth: '100%',
   },
   metaText: {
     color: colors.valueText,
-    fontSize: 13,
+    fontSize: 16,
+    fontWeight: '400',
   },
   metaDot: {
-    width: 3,
-    height: 3,
+    width: 4,
+    height: 4,
     borderRadius: 2,
     backgroundColor: colors.border,
   },
   divider: {
     height: 1,
     backgroundColor: colors.soft,
-    marginVertical: 18,
+    marginVertical: 20,
   },
   block: {
-    marginBottom: 18,
+    marginBottom: 20,
   },
   section: {
     color: colors.accent,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   value: {
     color: colors.valueText,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
   },
   chipContainer: {
     flexDirection: 'row',
@@ -250,6 +252,6 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: colors.labelText,
-    fontSize: 13,
+    fontSize: 14,
   },
 });
