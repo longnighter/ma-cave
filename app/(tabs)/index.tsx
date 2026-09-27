@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Appbar, Button, Dialog, FAB, Portal, Text } from 'react-native-paper';
-import { colors } from '../../constants/theme';
+import { colors, getWineColorStyle } from '../../constants/theme';
 import { useWines } from '../../context/WineContext';
 
 export default function HomeScreen() {
@@ -86,6 +86,7 @@ export default function HomeScreen() {
           }
           renderItem={({ item }) => {
             const selected = selectedIds.has(item.id);
+            const colorStyle = getWineColorStyle(item.color);
             return (
               <Pressable
                 style={({ pressed }) => [
@@ -100,7 +101,13 @@ export default function HomeScreen() {
                 onLongPress={() => toggleSelect(item.id)}
                 delayLongPress={300}
               >
-                <View style={[styles.icon, selected && styles.iconSelected]}>
+                <View
+                  style={[
+                    styles.icon,
+                    colorStyle ? { backgroundColor: colorStyle.swatch } : null,
+                    selected && styles.iconSelected,
+                  ]}
+                >
                   {selected ? (
                     <Text style={styles.checkMark}>✓</Text>
                   ) : null}

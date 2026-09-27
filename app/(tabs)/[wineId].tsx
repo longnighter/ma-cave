@@ -1,8 +1,8 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Chip, Text } from 'react-native-paper';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Chip } from 'react-native-paper';
 import { colors, getWineColorStyle } from '../../constants/theme';
 import { useWines } from '../../context/WineContext';
 
@@ -20,7 +20,6 @@ export default function WineDetailScreen() {
   }
 
   const grapes = Array.isArray(wine.grape) ? wine.grape.join(', ') : wine.grape;
-  const title = wine.appellation || wine.name;
   const colorStyle = getWineColorStyle(wine.color);
   const showMeta = Boolean(wine.color || wine.region || grapes);
 
@@ -35,7 +34,7 @@ export default function WineDetailScreen() {
         ) : null}
 
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{wine.name}</Text>
           {wine.year ? (
             <View style={styles.yearBadge}>
               <Text style={styles.yearText}>{wine.year}</Text>
@@ -148,8 +147,6 @@ const styles = StyleSheet.create({
     color: colors.accent,
     fontSize: 12,
     fontWeight: '600',
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
   },
   titleRow: {
     flexDirection: 'row',
@@ -161,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.ink,
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 26,
   },
   yearBadge: {
@@ -234,7 +231,7 @@ const styles = StyleSheet.create({
   section: {
     color: colors.accent,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 6,
   },
   value: {
