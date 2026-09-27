@@ -1,16 +1,23 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Appbar, Button, Dialog, FAB, Portal, Text } from 'react-native-paper';
 import { colors } from '../../constants/theme';
 import { useWines } from '../../context/WineContext';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { wines, loading, deleteWines } = useWines();
+  const { wines, loading, deleteWines, refreshWines } = useWines();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refreshWines();
+    setRefreshing(false);
+  };
 
   const selectionMode = selectedIds.size > 0;
 
@@ -46,11 +53,21 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       {wines.length === 0 ? (
-        <View style={styles.emptyContainer}>
+        <ScrollView
+          contentContainerStyle={styles.emptyContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.gold}
+              colors={[colors.gold]}
+            />
+          }
+        >
           <Text variant="headlineSmall" style={styles.emptyText}>
             Votre cave est vide.
           </Text>
-        </View>
+        </ScrollView>
       ) : (
         <FlatList
           data={wines}
@@ -59,6 +76,14 @@ export default function HomeScreen() {
             styles.listContent,
             selectionMode && styles.listContentWithBar,
           ]}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.gold}
+              colors={[colors.gold]}
+            />
+          }
           renderItem={({ item }) => {
             const selected = selectedIds.has(item.id);
             return (

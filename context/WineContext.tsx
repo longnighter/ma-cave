@@ -6,6 +6,7 @@ interface WineContextType {
   wines: Wine[];
   addWine: (wine: Omit<Wine, "id">) => Promise<boolean>; // La fonction est maintenant asynchrone
   deleteWines: (ids: string[]) => Promise<boolean>;
+  refreshWines: () => Promise<void>;
   loading: boolean;
 }
 
@@ -24,35 +25,41 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
   const [wines, setWines] = useState<Wine[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchWines = async () => {
-      setLoading(true);
-      try {
-        const { data, error, status } = await supabase
-          .from('wines')
-          .select('*')
-          .order('created_at', { ascending: false });
+  const fetchWines = async () => {
+    try {
+      const { data, error, status } = await supabase
+        .from('wines')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-        // Single string so RN LogBox cannot hide the payload as `null`
-        console.log(
-          `[fetchWines] status=${status} rows=${data?.length ?? 0} ` +
-            `error=${error ? `${error.message} | code=${error.code} | details=${error.details} | hint=${error.hint}` : 'none'}`,
-        );
+      // Single string so RN LogBox cannot hide the payload as `null`
+      console.log(
+        `[fetchWines] status=${status} rows=${data?.length ?? 0} ` +
+          `error=${error ? `${error.message} | code=${error.code} | details=${error.details} | hint=${error.hint}` : 'none'}`,
+      );
 
-        if (error) {
-          console.error(`[fetchWines] failed: ${error.message}`);
-        } else if (data) {
-          setWines(data.map(formatWine));
-        }
-      } catch (e: any) {
-        console.error(`[fetchWines] threw: ${e?.message ?? String(e)}`);
-      } finally {
-        setLoading(false);
+      if (error) {
+        console.error(`[fetchWines] failed: ${error.message}`);
+      } else if (data) {
+        setWines(data.map(formatWine));
       }
-    };
+    } catch (e: any) {
+      console.error(`[fetchWines] threw: ${e?.message ?? String(e)}`);
+    }
+  };
 
-    fetchWines();
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      await fetchWines();
+      setLoading(false);
+    };
+    load();
   }, []);
+
+  const refreshWines = async () => {
+    await fetchWines();
+  };
 
   const addWine = async (wineToAdd: Omit< Wine, "id">) => {
     const { data, error } = await supabase
@@ -67,7 +74,8 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
         tasting_notes: wineToAdd.tastingNotes,
         appellation: wineToAdd.appellation,
         wine_pairing: wineToAdd.winePairing,
-        domain: wineToAdd.domain
+        domain: wineToAdd.domain,
+        color: wineToAdd.color
        })
       .select()
       .single();
@@ -100,7 +108,7 @@ export const WineProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <WineContext.Provider value={{ wines, addWine, loading, deleteWines }}>
+    <WineContext.Provider value={{ wines, addWine, loading, deleteWines, refreshWines }}>
       {children}
     </WineContext.Provider>
   );
